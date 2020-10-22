@@ -1,4 +1,4 @@
-from BackTest.back_test import BackTest
+from back_test import BackTest
 from collections import deque
 import numpy as np
 from iexfinance.stocks import get_historical_intraday

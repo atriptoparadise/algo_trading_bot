@@ -72,7 +72,10 @@ class UpdateData(object):
             while not ('open' in data_list[start] and data_list[start]['open']):
                 start += 1
 
-            return data_list[end]['close'] - data_list[start]['open']
+            diff = data_list[end]['close'] - data_list[start]['open']
+            if data_list[start]['open'] == 0:
+                return diff, None
+            return diff, 100 * (diff / data_list[start]['open'])
         except:
             return None
     
@@ -84,7 +87,10 @@ class UpdateData(object):
             while not ('volume' in data_list[start] and data_list[start]['volume']):
                 start += 1
 
-            return data_list[end]['volume'] - data_list[start]['volume']
+            diff = data_list[end]['volume'] - data_list[start]['volume']
+            if data_list[start]['volume'] == 0:
+                return diff, None
+            return diff, 100 * (diff / data_list[start]['volume'])
         except:
             return None
 
@@ -110,22 +116,26 @@ class UpdateData(object):
                 volume_30_days.append(max(volume_today))
         
         today_data_list = get_historical_intraday(ticker, start_date, token=self.token)
-        price_close_open = self.get_price_close_open(today_data_list)
-        volume_close_open = self.get_volume_close_open(today_data_list)
+        price_close_open, price_ratio = self.get_price_close_open(today_data_list)
+        volume_close_open, volume_ratio = self.get_volume_close_open(today_data_list)
 
         if not self._data:
             self._data = {ticker: {'volume': volume_30_days,
                                     'high': high_30_days,
                                     'date': start_date.date(),
                                     'price_close_open': price_close_open,
-                                    'volume_close_open': volume_close_open
+                                    'volume_close_open': volume_close_open,
+                                    'price_ratio': price_ratio,
+                                    'volume_ratio': volume_ratio
                                     }}
         else:
             self._data.update({ticker: {'volume': volume_30_days,
                                     'high': high_30_days,
                                     'date': start_date.date(),
                                     'price_close_open': price_close_open,
-                                    'volume_close_open': volume_close_open
+                                    'volume_close_open': volume_close_open,
+                                    'price_ratio': price_ratio,
+                                    'volume_ratio': volume_ratio
                                     }})
 
     def save_date(self):
@@ -152,7 +162,7 @@ class UpdateData(object):
         print(f'{ticker} updates ..')
         start_date = datetime.now().date()
         if midnight:
-            start_date = (start_date - timedelta(1)).date()
+            start_date = start_date - timedelta(1)
 
         updated_date = self._data[ticker]['date']
 
@@ -174,8 +184,8 @@ class UpdateData(object):
                 self._data[ticker]['volume'].append(max(volume_today))
 
             self._data[ticker]['date'] = date
-            self._data[ticker]['price_close_open'] = self.get_price_close_open(data_list)
-            self._data[ticker]['volume_close_open'] = self.get_volume_close_open(data_list)
+            self._data[ticker]['price_close_open'], self._data[ticker]['price_ratio'] = self.get_price_close_open(data_list)
+            self._data[ticker]['volume_close_open'], self._data[ticker]['volume_ratio'] = self.get_volume_close_open(data_list)
 
     def clean_data(self):
         if not self._data:
@@ -193,13 +203,13 @@ class UpdateData(object):
         for ticker in remove_list:
             self._data.pop(ticker)
 
-    def run(self, ticker_list, midnight=False):
+    def run(self, watch_list, midnight=False):
         print('')
         print('load data ..')
         self.load_data()
         print('')
 
-        for ticker in ticker_list:
+        for ticker in watch_list:
             try:
                 self.update(ticker, midnight)
                 print('Done')
@@ -217,8 +227,8 @@ class UpdateData(object):
 
 if __name__ == "__main__":
 
-    ticker_list = ['CCNC', 'PEP', 'YEYI',
-                    'MRNA','ICLK', 'MRVL', 'HD', 'SWI', 'LITB',
+    watch_list = ['CCNC', 'PEP', 'MRNA','ICLK', 
+                    'MRVL', 'HD', 'SWI', 'LITB',
                     'NIO', 'OLLI', 'PEAK', 'XONE', 'UNH', 'BEP', 
                     'BERY', 'DT', 'ARC', 'PFE', 'EVK', 'PQG',
                     'NEM', 'NMIH', 'ZTS', 'BILI', 'GSX', 
@@ -289,12 +299,13 @@ if __name__ == "__main__":
                     'LAUR', 'LEVI', 'PE', 'TDS', 'USM', 
                     'YETI', 'FRPT', 'FNF', 'CDAY','NMRK', 
                     'VKTX', 'CL=F', 'OXY', 'SNOW', 'ARKW', 
-                    'ITOT', 'XPEV', 'ARKK', 'BTE']
-    ticker_list = ['WDFC', 'GSX', 'CRSP', 'ERIC', 'CHU', 'FVRR', 'PHR', 'CMBM', 'ESTA', 'DAO']
-    # ticker_list = ['BYD' ]
+                    'ITOT', 'XPEV', 'ARKK', 'BTE', 'WDFC', 
+                    'GSX', 'CRSP', 'ERIC', 'CHU', 'FVRR', 
+                    'PHR', 'CMBM', 'ESTA', 'DAO']
+
     # Do NOT run this script during HOURS!!
     # If you're runing after 12 am to update, use True in midnight parameter
 
     token = 'sk_17b078529ba34b7396ef93de2d19b287'
     update = UpdateData(token, 'data/data.pickle')
-    update.run(ticker_list, midnight=True)
+    update.run(watch_list, midnight=False)

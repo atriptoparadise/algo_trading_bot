@@ -4,3 +4,4 @@ logs/
 __pycache__/
 .DS_Store
 test.py
+signal_2020-10-21.log

@@ -4,6 +4,8 @@ import time as t
 from datetime import datetime
 import schedule
 import logging
+import requests
+import json
 
 logfile = 'logs/signal_{}.log'.format(datetime.now().date())
 logging.basicConfig(filename=logfile, level=logging.WARNING)
@@ -45,16 +47,30 @@ def find_signal(ticker, ticker_data, api, alpha_price, alpha_volume):
     volume_moving = stock_barset_moving.iloc[idx:, -1].sum()
     high_moving = (stock_barset_moving.iloc[idx:, 2].mean() + stock_barset_moving.iloc[idx:, 3].mean()) / 2
     
+    current_price = stock_barset_moving.iloc[-1, 2]
+
     # today high and volume
     today_high_so_far = max(stock_barset.iloc[:, 2])
     today_volume_so_far = max(stock_barset.iloc[:, -1])
 
     volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
     if high >= alpha_price * max(high_max, today_high_so_far) and volume >= alpha_volume * max(volume_max, today_volume_so_far):
-        logging.warning(f'Signal - {ticker}, price: {high}, volume: {volume} @ {datetime.now()} \n Previous high: {high_max}, volume: {volume_max} \n')
+        logging.warning(f'Signal - {ticker}, price: {current_price}, volume: {volume} @ {datetime.now()} \n Previous high: {high_max}, volume: {volume_max} \n')
+        try:
+            share = 10000 // current_price
+            response = create_order(ticker, share, 'buy', 'market', 'gtc')
+            print(response)
+        except:
+            pass
     if high_moving >= alpha_price * max(high_max, today_high_so_far) and volume_moving >= alpha_volume * max(volume_max, today_volume_so_far):
-        logging.warning(f'Signal (moving) - {ticker}, price: {high_moving}, volume: {volume_moving} @ {datetime.now()} \n Previous high: {high_max}, volume: {volume_max} \n')
-    print(f'{ticker}, volume: {volume_max, volume, volume_moving, today_volume_so_far}, price: {high_max, high, high_moving, today_high_so_far}')
+        logging.warning(f'Signal (moving) - {ticker}, price: {current_price}, volume: {volume_moving} @ {datetime.now()} \n Previous high: {high_max}, volume: {volume_max} \n')
+        try:
+            share = 10000 // current_price
+            response = create_order(ticker, share, 'buy', 'market', 'gtc')
+            print(response)
+        except:
+            pass
+    print(f'{ticker}, volume: {volume_max, volume, volume_moving, today_volume_so_far}, price: {high_max, current_price, high, high_moving, today_high_so_far}')
 
 def run(alpha_price, alpha_volume):
     api = setup()
@@ -70,8 +86,25 @@ def run(alpha_price, alpha_volume):
             find_signal(ticker, data[ticker], api, alpha_price, alpha_volume)
             pass
 
+def create_order(symbol, qty, side, order_type, time_in_force):
+    data = {
+        "symbol": symbol,
+        "qty": qty,
+        "side": side,
+        "type": order_type,
+        "time_in_force": time_in_force
+    }
+
+    HEADERS = {'APCA-API-KEY-ID': 'PKURD8LXNN3ET9MLQ3Q0', 
+                'APCA-API-SECRET-KEY': 'x0YwJnP9HzCAUBO4DAYogSUKEPrj3FckNniYdetg'}
+    BASE_URL = 'https://paper-api.alpaca.markets'
+    ORDERS_URL = "{}/v2/orders".format(BASE_URL)
+
+    r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
+    return json.loads(r.content)
+
 if __name__ == "__main__":
     # run()
-    schedule.every(1).seconds.do(run, alpha_price=0.9, alpha_volume=1.3)
+    schedule.every(1).seconds.do(run, alpha_price=0.9, alpha_volume=1.2)
     while True:
         schedule.run_pending()

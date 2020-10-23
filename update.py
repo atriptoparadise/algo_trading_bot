@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 import datetime as dt
 import pickle
 
+
 class UpdateData(object):
     def __init__(self, token, pickle_file):
         self._data = {}
@@ -77,7 +78,7 @@ class UpdateData(object):
                 return diff, None
             return diff, 100 * (diff / data_list[start]['open'])
         except:
-            return None
+            return None, None
     
     def get_volume_close_open(self, data_list):
         start, end = 0, -1
@@ -92,7 +93,7 @@ class UpdateData(object):
                 return diff, None
             return diff, 100 * (diff / data_list[start]['volume'])
         except:
-            return None
+            return None, None
 
     def init_data(self, ticker, midnight):
         print(f'{ticker} initializes ..')
@@ -227,84 +228,7 @@ class UpdateData(object):
 
 if __name__ == "__main__":
 
-    watch_list = ['CCNC', 'PEP', 'MRNA','ICLK', 
-                    'MRVL', 'HD', 'SWI', 'LITB',
-                    'NIO', 'OLLI', 'PEAK', 'XONE', 'UNH', 'BEP', 
-                    'BERY', 'DT', 'ARC', 'PFE', 'EVK', 'PQG',
-                    'NEM', 'NMIH', 'ZTS', 'BILI', 'GSX', 
-                    'SBUX', 'BBAR', 'BAC', 'BYSI', 'GFI','ACB', 
-                    'QDEL', 'NNDM', 'SELB', 'VZ', 'PINS', 'FB', 
-                    'UAL', 'FEDU', 'VNET', 'FIVE', 'GE',
-                    'OIIM', 'JPM', 'SURF', 'PLAN', 'SMHI', 'CSIQ', 
-                    'BEAM', 'EBS', 'KW', 'AMD', 'TMO', 'GMAB', 
-                    'AAN', 'VRTX', 'ACI', 'PG', 'AIHS', 
-                    'AEY', 'BABA', 'HEXO', 'T',
-                    'SOS', 'MED', 'GOOS', 'FIT', 'V', 'NRG', 
-                    'NVDA', 'ARD', 'ABBV', 'BTI', 'PBI', 'VIRT',
-                    'INTC', 'NKLA', 'CVS', 'KXIN', 'MA', 'SMG', 
-                    'ENV', 'BGCP', 'DAL', 'MTSL', 'VRNT', 'NVOA',
-                    'ETTX', 'BIG', 'AIKI', 'NVS', 'BHF', 'EARS',
-                    'DG', 'GPRO', 'NCLH', 'IPHI', 'FRPT', 'NFLX',
-                    'CCL', 'CGC', 'NXST', 'ENSG', 'FLDM', 'CRM',
-                    'JNJ', 'GOGO', 'AAL', 'HELE', 'ZSAN',
-                    'OCUL', 'LINX', 'DQ', 'SSNC', 'BA', 'GOOG',
-                    'MRK', 'LEE', 'VXX', 'BPYU', 'UFS', 'BIMI',
-                    'CNNE', 'FUTU', 'WEI', 'EYPT', 'SPWH', 'SMPL',
-                    'ALK', 'GTN', 'CYRX', 'PFSI', 'UVE', 'SNAP',
-                    'NLOK', 'BRK.B', 'MFH', 'DIS', 'QQQ', 'ZM',
-                    'PLUG', 'KIRK', 'MCD', 'NVO', 'COST', 'DHR', 'AVGO',
-                    'UPS', 'AMGN', 'TMUS', 'NTES', 'BIDU',
-                    'LFC', 'CEA', 'NOAH', 'LI', 'NIU',
-                    'NIO', 'PDD', 'TCOM', 'TIGR', 'JD',
-                    'XPENG', 'GS', 'C', 'BAC', 'JPM',
-                    'AMZN', 'MS', 'SPG', 'BS', 'WFC',
-                    'PEP', 'JNJ', 'DILD', 'MCD', 'GSK',
-                    'WMG', 'GM', 'TM', 'HMC', 'TSLA',
-                    'GE', 'NKE', 'WMT', 'PG', 'BA',
-                    'MMM', 'FDX', 'HLT', 'ERX',
-                    'SPY', 'BABA',  'FB', 'SSNC', 'AEY', 
-                    'VXX', 'GOOG','BILI', 'ZTS', 'NFLX', 'CCL',
-                    'IBM', 'BYD', 'LOGI', 'CCK', 
-                    'BLI', 'HXL', 'PACB', 'CRSR',
-                    'NNOX', 'OSUR', 'HYLN', 'IH', 'ACB',
-                    'UXIN', 'KXIN', 'AMC','AAPL', 'F', 
-                    'GE', 'MSFT', 'AAL', 
-                    'DIS', 'DAL', 'NCLH', 'SNAP', 'FIT',
-                    'MRNA', 'UAL', 'AMD', 'HEXO', 'T', 'NFLX', 'CGC',
-                    'UBER', 'TWTR', 'NKLA', 'KO', 'NVDA',
-                    'APHA', 'CRON', 'ZNGA', 'RCL', 'SBUX',
-                    'PFE', 'LUV''INO', 'SAVE', 'MRO', 'JBLU', 'WKHS',
-                    'SPCE', 'XOM', 'VOO', 'WMT', 'MGM',
-                    'DKNG', 'HTZ', 'NOK', 'SNE', 'GUSH',
-                    'SQ', 'GM', 'MFA', 'SIRI', 'PTON',
-                    'IVR', 'ZM', 'USO', 'GOOGL', 'UCO',
-                    'CPRX', 'WORK', 'NRZ', 'PENN',
-                    'INTC', 'TLRY', 'V', 'PSEC', 'BRK.B',
-                    'WFC', 'JNJ', 'FCEL', 'LYFT', 'SPHD',
-                    'KOS', 'RKT', 'IBIO', 'PYPL', 'ET',
-                    'PLAY', 'SRNE', 'GILD', 'KODK', 'HAL',
-                    'TXMD', 'BP', 'VTI', 'BYND',
-                    'PLTR', 'NVAX', 'PG', 'HD', 'UNH', 'VZ', 'CMCSA',
-                    'PEP', 'ABT', 'ORCL', 'TMO', 'MCD',
-                    'NVO', 'COST', 'DHR', 'AVGO', 'UPS',
-                    'AMGN', 'TMUS', 'SQ', 'MED',
-                    'BABA', 'NXST', 'ABBV', 'NMIH', 'PEAK',
-                    'NEM', 'BTI', 'FB', 'UVE', 'BPYU',
-                    'BHF', 'NRG', 'ARD', 'NLOK',
-                    'QDEL', 'CRM', 'ACI', 'BERY', 'LVGO',
-                    'IMMU', 'YETI', 'CVX', 'WBA', 'HON',
-                    'DBX', 'NOVA', 'WFH', 'DNB', 
-                    'LMDN', 'IPOS', 'RPRX', 'ADBE', 
-                    'DOCU', 'EBAY', 'ETSY', 'STNE', 'EXAS',
-                    'LAUR', 'LEVI', 'PE', 'TDS', 'USM', 
-                    'YETI', 'FRPT', 'FNF', 'CDAY','NMRK', 
-                    'VKTX', 'CL=F', 'OXY', 'SNOW', 'ARKW', 
-                    'ITOT', 'XPEV', 'ARKK', 'BTE', 'WDFC', 
-                    'GSX', 'CRSP', 'ERIC', 'CHU', 'FVRR', 
-                    'PHR', 'CMBM', 'ESTA', 'DAO']
-
-    # Do NOT run this script during HOURS!!
-    # If you're runing after 12 am to update, use True in midnight parameter
+    watch_list = ['WEI', 'CCNC', 'PEP', 'MRNA', 'ICLK', 'MRVL', 'HD', 'SWI', 'LITB', 'NIO', 'OLLI', 'PEAK', 'XONE', 'UNH', 'BEP', 'BERY', 'DT', 'ARC', 'PFE', 'EVK', 'PQG', 'NEM', 'NMIH', 'ZTS', 'BILI', 'GSX', 'SBUX', 'BBAR', 'BAC', 'BYSI', 'GFI', 'ACB', 'QDEL', 'NNDM', 'SELB', 'VZ', 'PINS', 'FB', 'UAL', 'FEDU', 'VNET', 'FIVE', 'GE', 'OIIM', 'JPM', 'SURF', 'PLAN', 'SMHI', 'CSIQ', 'BEAM', 'EBS', 'KW', 'AMD', 'TMO', 'GMAB', 'AAN', 'VRTX', 'ACI', 'PG', 'AIHS', 'AEY', 'BABA', 'HEXO', 'T', 'SOS', 'MED', 'GOOS', 'FIT', 'V', 'NRG', 'NVDA', 'ARD', 'ABBV', 'BTI', 'PBI', 'VIRT', 'INTC', 'NKLA', 'CVS', 'KXIN', 'MA', 'SMG', 'ENV', 'BGCP', 'DAL', 'MTSL', 'VRNT', 'ETTX', 'BIG', 'AIKI', 'NVS', 'BHF', 'EARS', 'DG', 'GPRO', 'NCLH', 'IPHI', 'FRPT', 'NFLX', 'CCL', 'CGC', 'NXST', 'ENSG', 'FLDM', 'CRM', 'JNJ', 'GOGO', 'AAL', 'HELE', 'ZSAN', 'OCUL', 'LINX', 'DQ', 'SSNC', 'BA', 'GOOG', 'MRK', 'LEE', 'VXX', 'BPYU', 'UFS', 'BIMI', 'CNNE', 'FUTU', 'EYPT', 'SPWH', 'SMPL', 'ALK', 'GTN', 'CYRX', 'PFSI', 'UVE', 'SNAP', 'NLOK', 'BRK.B', 'MFH', 'DIS', 'QQQ', 'ZM', 'PLUG', 'KIRK', 'MCD', 'NVO', 'COST', 'DHR', 'AVGO', 'UPS', 'AMGN', 'TMUS', 'NTES', 'BIDU', 'LFC', 'CEA', 'NOAH', 'LI', 'NIU', 'PDD', 'TCOM', 'TIGR', 'JD', 'GS', 'C', 'AMZN', 'MS', 'SPG', 'WFC', 'GSK', 'WMG', 'GM', 'TM', 'HMC', 'TSLA', 'NKE', 'WMT', 'MMM', 'FDX', 'HLT', 'ERX', 'SPY', 'IBM', 'LOGI', 'CCK', 'BLI', 'HXL', 'PACB', 'CRSR', 'NNOX', 'OSUR', 'HYLN', 'IH', 'UXIN', 'AMC', 'AAPL', 'F', 'MSFT', 'UBER', 'TWTR', 'KO', 'APHA', 'CRON', 'ZNGA', 'RCL', 'SAVE', 'MRO', 'JBLU', 'WKHS', 'SPCE', 'XOM', 'VOO', 'MGM', 'DKNG', 'HTZ', 'NOK', 'SNE', 'GUSH', 'SQ', 'MFA', 'SIRI', 'PTON', 'IVR', 'USO', 'GOOGL', 'UCO', 'CPRX', 'WORK', 'NRZ', 'PENN', 'TLRY', 'PSEC', 'FCEL', 'LYFT', 'SPHD', 'KOS', 'RKT', 'IBIO', 'PYPL', 'ET', 'PLAY', 'SRNE', 'GILD', 'KODK', 'HAL', 'TXMD', 'BP', 'VTI', 'BYND', 'PLTR', 'NVAX', 'CMCSA', 'ABT', 'ORCL', 'LVGO', 'IMMU', 'YETI', 'CVX', 'WBA', 'HON', 'DBX', 'NOVA', 'WFH', 'DNB', 'IPOS', 'RPRX', 'ADBE', 'DOCU', 'EBAY', 'ETSY', 'STNE', 'EXAS', 'LAUR', 'LEVI', 'PE', 'TDS', 'USM', 'FNF', 'CDAY', 'NMRK', 'VKTX', 'OXY', 'SNOW', 'ARKW', 'ITOT', 'XPEV', 'ARKK', 'BTE', 'BYD', 'WDFC', 'CRSP', 'ERIC', 'CHU', 'FVRR', 'PHR', 'CMBM', 'ESTA', 'DAO', 'ADAP', 'LAC', 'HAE', 'WGO', 'IRBT', 'SMTS', 'BGI', 'SQBG', 'ALGN', 'MXL', 'REPL', 'SDC', 'RPTX', 'GME', 'BCLI', 'TC', 'TAL', 'CINF', 'GPS', 'CNX', 'SABR', 'GLBS', 'IPOB', 'HA', 'AMSC', 'ATVI', 'AYX', 'APPN', 'HQY', 'BL', 'ESTC', 'WU', 'FANG', 'EVK', 'TC', 'KBSF', 'SQBG', 'ALGN', 'BPTH', 'BEAM', 'IH', 'CDOR', 'NVFY', 'HX', 'NOA', 'HA', 'EVK', 'TC', 'KBSF', 'SQBG', 'ALGN', 'BPTH', 'CCM', 'BEAM', 'IH', 'CDOR', 'NVFY', 'HX', 'NOA', 'HA', 'SABR', 'LMPX', 'CGA', 'SQNS', 'INBK', 'DPST', 'NTN', 'GPS', 'OTRK', 'MXL', 'LXU', 'ENLC', 'ARD', 'ARRY', 'RPTX', 'CNX', 'CLPS', 'CRDF', 'RBET', 'RCI', 'WBS', 'VIAO', 'PXLW', 'NRGU', 'IMTE', 'IKNX', 'GUSH', 'TALO','SIEN', 'OIIM', 'DMTK', 'ARTW', 'HIBL', 'PSTX', 'NCNA', 'AGIO', 'SNOW', 'BEST', 'ESTA', 'BKD', 'ADCT', 'SANW', 'NNDM', 'SAVE', 'DDD', 'BNKU', 'PACW', 'NCTY', 'CCB', 'FOSL', 'DFS', 'SNA', 'SWN', 'CATB', 'VET', 'EXPE', 'JWN', 'JBLU', 'STL', 'NBLX', 'CAL', 'SMMF', 'STKS', 'GDP', 'SIX', 'NGL', 'LIND', 'UMC', 'LOGC', 'AXL', 'MR', 'PINE', 'UCBI', 'ALLK', 'GB', 'RRC', 'LVS', 'KRON', 'INTZ', 'STTK', 'INBX', 'PHAT', 'GO', 'CUTR', 'IAF', 'CGC', 'NESR', 'GTIM', 'FFWM', 'NID', 'TREE', 'MGEE', 'WEC', 'CLTL', 'AEIS', 'ATR', 'MDU', 'GEF', 'GUT''DTP', 'DD', 'FUL', 'GEF.B', 'TTEC', 'YUM', 'DLHC', 'DLB', 'KF', 'BBU', 'MITK', 'KWR', 'UGI', 'EVV', 'BLX', 'LDL', 'MCHP', 'AMH', 'TW', 'NPO', 'CDXS', 'SIM', 'NGG', 'EVY', 'LPLA', 'ENV', 'UTG', 'NTNX', 'KO', 'HNGR', 'DVA', 'HAS', 'PROF', 'PORM', 'CKH', 'LXU', 'FL', 'NMCI', 'ES', 'IIIN', 'YORW', 'MU', 'SIRI', 'LNT', 'AEE', 'ETR', 'STAG', 'LARK', 'CNET', 'ALB', 'DTE', 'MMYT', 'HIMX', 'CAF', 'UTF', 'AA', 'ESE', 'PCH', 'ST', 'GGB', 'WRB', 'BR', 'HLIT', 'AY', 'SFBS', 'QUOT', 'ORBC', 'PSMT', 'KEYS', 'RNR', 'BANC', 'ZNTL', 'GOED', 'BERY', 'CYH', 'KRON', 'INTZ', 'STTK', 'INBX', 'MAACU', 'QELLU', 'FGNA.U', 'EPP', 'CUTR', 'CMLFU', 'XME', 'RWL', 'SCKT', 'STRT']
 
     token = 'sk_17b078529ba34b7396ef93de2d19b287'
     update = UpdateData(token, 'data/data.pickle')

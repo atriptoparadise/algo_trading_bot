@@ -11,8 +11,8 @@ logfile = 'logs/signal_{}.log'.format(datetime.now().date())
 logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 def setup():
-    api = tradeapi.REST('PKURD8LXNN3ET9MLQ3Q0', 
-                        'x0YwJnP9HzCAUBO4DAYogSUKEPrj3FckNniYdetg',
+    api = tradeapi.REST('PKDLZFEJND51O3Q3TZ3F', 
+                        'xguRqEqr3cw0sNA2cQcxIeCuIacqN9mXnvB8LyaO',
                         api_version = 'v2')
     return api
 
@@ -53,9 +53,9 @@ def find_signal(ticker, ticker_data, api, alpha_price, alpha_volume):
     today_high_so_far = max(stock_barset.iloc[:, 2])
     today_volume_so_far = max(stock_barset.iloc[:, -1])
 
-    volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
-    if high >= alpha_price * max(high_max, today_high_so_far) and volume >= alpha_volume * max(volume_max, today_volume_so_far):
-        logging.warning(f'Signal - {ticker}, price: {current_price}, volume: {volume} @ {datetime.now()} \n Previous high: {high_max}, volume: {volume_max} \n')
+    volume_max, high_max = max(max(ticker_data['volume']), today_volume_so_far), max(max(ticker_data['high']), today_high_so_far)
+    if high >= alpha_price * high_max and volume >= alpha_volume * volume_max:
+        logging.warning(f'Signal - {ticker}, price: {current_price}, volume: {volume} @ {datetime.now()} \nPrevious highest price: {high_max}, volume: {volume_max} \n')
         try:
             share = 10000 // current_price
             response = create_order(ticker, share, 'buy', 'market', 'gtc')
@@ -63,7 +63,7 @@ def find_signal(ticker, ticker_data, api, alpha_price, alpha_volume):
         except:
             pass
     if high_moving >= alpha_price * max(high_max, today_high_so_far) and volume_moving >= alpha_volume * max(volume_max, today_volume_so_far):
-        logging.warning(f'Signal (moving) - {ticker}, price: {current_price}, volume: {volume_moving} @ {datetime.now()} \n Previous high: {high_max}, volume: {volume_max} \n')
+        logging.warning(f'Signal (moving) - {ticker}, price: {current_price}, volume: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max}, volume: {volume_max} \n')
         try:
             share = 10000 // current_price
             response = create_order(ticker, share, 'buy', 'market', 'gtc')
@@ -95,8 +95,8 @@ def create_order(symbol, qty, side, order_type, time_in_force):
         "time_in_force": time_in_force
     }
 
-    HEADERS = {'APCA-API-KEY-ID': 'PKURD8LXNN3ET9MLQ3Q0', 
-                'APCA-API-SECRET-KEY': 'x0YwJnP9HzCAUBO4DAYogSUKEPrj3FckNniYdetg'}
+    HEADERS = {'APCA-API-KEY-ID': 'PKDLZFEJND51O3Q3TZ3F', 
+                'APCA-API-SECRET-KEY': 'xguRqEqr3cw0sNA2cQcxIeCuIacqN9mXnvB8LyaO'}
     BASE_URL = 'https://paper-api.alpaca.markets'
     ORDERS_URL = "{}/v2/orders".format(BASE_URL)
 

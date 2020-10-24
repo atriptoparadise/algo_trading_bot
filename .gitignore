@@ -3,5 +3,6 @@ logs/
 .vscode/
 __pycache__/
 .DS_Store
+config.py
 test.py
-signal_2020-10-21.log
+holding.pickle

@@ -13,16 +13,17 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, alpha_price, alpha_volume, balance, volatility, stop_ratio):
+    def __init__(self, alpha_price, alpha_volume, balance, volatility, stop_ratio, high_to_current_ratio):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
         self.limit_order = balance / volatility
         self.api = None
         self.stop_ratio = stop_ratio
+        self.high_to_current_ratio = high_to_current_ratio
         self.holding_stocks = {}
         self.request_headers = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
-        self.base_url = 'https://paper-api.alpaca.markets'
+        self.base_url = BASE_URL
 
     def setup(self):
         self.api = tradeapi.REST(API_KEY, 
@@ -71,7 +72,7 @@ class LiveTrade(object):
         current_price = stock_barset_moving.iloc[-1, 2]
         return high_moving, volume_moving, current_price
 
-    def check_holding(self, ticker):
+    def holding_risk_control(self, ticker):
         current_price = self.api.get_barset(ticker, '1Min', limit = 1)[ticker][-1].c
         if current_price <= self.stop_ratio * self.holding_stocks[ticker][0]:
             self.create_order(symbol=ticker, 
@@ -81,18 +82,38 @@ class LiveTrade(object):
                             time_in_force='gtc')
             self.holding_stocks.pop(ticker)
 
+    def high_current_check(self, ticker, current_price):
+        if datetime.now().hour < 15:
+            return True
+        
+        stock_barset = api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
+        idx = 0
+        while stock_barset.time[idx].day < datetime.now().day or stock_barset.time[idx].hour < 9:
+            idx += 1
+        while stock_barset.time[idx].minute < 30:
+            idx += 1
+        
+        high = data.iloc[idx:, 2].max()
+        open_price = stock_barset.iloc[idx, 1]
+
+        if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
+            return True
+        return False
+
     def find_signal(self, ticker, ticker_data):
         if ticker in self.holding_stocks:
-            self.check_holding(ticker)
+            self.holding_risk_control(ticker)
             return
 
         print(ticker)
         high_fix, volume_fix, today_high_so_far, today_volume_so_far = self.high_volume_fix_15m(ticker)
         high_moving, volume_moving, current_price = self.high_volume_moving_15m(ticker)
-
+        open_price = self.api.get_barset(ticker, '1D', limit=1)[ticker][0].o
         volume_max, high_max = max(max(ticker_data['volume']), today_volume_so_far), max(max(ticker_data['high']), today_high_so_far)
         
-        if high_fix >= self.alpha_price * high_max and max(volume_fix, volume_moving) >= self.alpha_volume * volume_max:
+        if current_price >= self.alpha_price * high_max and max(volume_fix, volume_moving) >= self.alpha_volume * volume_max:
+            if not self.high_current_check(ticker, current_price) or current_price >= 1.15 * open_price:
+                return
             try:
                 response = self.create_order(symbol=ticker, 
                                             qty=self.limit_order // current_price, 
@@ -123,10 +144,6 @@ class LiveTrade(object):
         
         self.save_data('holding')
 
-    def high_avg_check(self, ticker):
-        if datetime.now().hour <= 15:
-            return True
-
     def create_order(self, symbol, qty, side, order_type, time_in_force):
         data = {
             "symbol": symbol,
@@ -141,7 +158,8 @@ class LiveTrade(object):
         return json.loads(r.content)
 
 if __name__ == "__main__":
-    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=100000, volatility=10, stop_ratio=0.95)
+    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=100000, 
+                        volatility=10, stop_ratio=0.95, high_to_current_ratio=0.2)
     schedule.every(1).seconds.do(trade.run)
     while True:
         schedule.run_pending()

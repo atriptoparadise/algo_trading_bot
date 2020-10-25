@@ -22,8 +22,6 @@ class LiveTrade(object):
         self.stop_ratio = stop_ratio
         self.high_to_current_ratio = high_to_current_ratio
         self.holding_stocks = {}
-        self.request_headers = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
-        self.base_url = BASE_URL
 
     def setup(self):
         self.api = tradeapi.REST(API_KEY, 
@@ -86,7 +84,7 @@ class LiveTrade(object):
         if datetime.now().hour < 15:
             return True
         
-        stock_barset = api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
+        stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         idx = 0
         while stock_barset.time[idx].day < datetime.now().day or stock_barset.time[idx].hour < 9:
             idx += 1
@@ -153,9 +151,12 @@ class LiveTrade(object):
             "time_in_force": time_in_force
         }
 
-        ORDERS_URL = "{}/v2/orders".format(self.base_url)
-        r = requests.post(ORDERS_URL, json=data, headers=self.request_headers)
+        HEADERS = {'APCA-API-KEY-ID': API_KEY, 'APCA-API-SECRET-KEY': SECRET_KEY}
+        ORDERS_URL = "{}/v2/orders".format(BASE_URL)
+
+        r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         return json.loads(r.content)
+
 
 if __name__ == "__main__":
     trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=100000, 

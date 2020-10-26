@@ -17,7 +17,7 @@ class LiveTrade(object):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
-        self.limit_order = balance / volatility
+        self.limit_order = balance / (volatility * 2)
         self.api = None
         self.stop_ratio = stop_ratio
         self.current_to_open_ratio = current_to_open_ratio
@@ -49,7 +49,7 @@ class LiveTrade(object):
         stock_barset = self.api.get_barset(ticker, '15Min', limit = 27).df.reset_index()
         now_or_last = datetime.now().minute % 15 == 0
 
-        if now_or_last:
+        if now_or_last or (datetime.now().hour == 9 and datetime.now().minute < 45):
             high = (stock_barset.iloc[-1, :].tolist()[2] + stock_barset.iloc[-1, :].tolist()[3]) / 2
             volume = stock_barset.iloc[-1, :].tolist()[-1]
         else:
@@ -82,9 +82,9 @@ class LiveTrade(object):
             self.holding_stocks.pop(ticker)
 
     def high_current_check(self, ticker, current_price):
-        if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9:
+        if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
             logging.warning(f'Signal after hours - {ticker}, price: {current_price} @ {datetime.now()}')
-            return False, 0
+            return False, 0, 0
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         idx = 0
         while stock_barset.time[idx].day < datetime.now().day or stock_barset.time[idx].hour < 9:
@@ -95,9 +95,11 @@ class LiveTrade(object):
         high = stock_barset.iloc[idx:, 2].max()
         open_price = stock_barset.iloc[idx, 1]
 
-        if datetime.now().hour < 15 or (current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio):
-            return True, open_price
-        return False, open_price
+        if datetime.now().hour < 15:
+            return True, open_price, 1
+        if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
+            return True, open_price, 2
+        return False, open_price, 0
 
     def find_signal(self, ticker, ticker_data):
         if ticker in self.holding_stocks:
@@ -110,12 +112,12 @@ class LiveTrade(object):
         volume_max, high_max = max(max(ticker_data['volume']), today_volume_so_far), max(max(ticker_data['high']), today_high_so_far)
         
         if current_price >= self.alpha_price * high_max and max(volume_fix, volume_moving) >= self.alpha_volume * volume_max:
-            good, open_price = self.high_current_check(ticker, current_price)
+            good, open_price, after_3pm = self.high_current_check(ticker, current_price)
             if not good or current_price >= self.current_to_open_ratio * open_price:
                 return
             try:
                 response = self.create_order(symbol=ticker, 
-                                            qty=self.limit_order // current_price, 
+                                            qty=self.limit_order * after_3pm // current_price, 
                                             side='buy', 
                                             order_type='market', 
                                             time_in_force='day')

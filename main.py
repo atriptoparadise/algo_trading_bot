@@ -13,13 +13,14 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, alpha_price, alpha_volume, balance, volatility, stop_ratio, high_to_current_ratio):
+    def __init__(self, alpha_price, alpha_volume, balance, volatility, stop_ratio, high_to_current_ratio, current_to_open_ratio):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
         self.limit_order = balance / volatility
         self.api = None
         self.stop_ratio = stop_ratio
+        self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
         self.holding_stocks = {}
 
@@ -82,6 +83,7 @@ class LiveTrade(object):
 
     def high_current_check(self, ticker, current_price):
         if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9:
+            logging.warning(f'Signal after hours - {ticker}, price: {current_price} @ {datetime.now()}')
             return False, 0
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         idx = 0
@@ -109,7 +111,7 @@ class LiveTrade(object):
         
         if current_price >= self.alpha_price * high_max and max(volume_fix, volume_moving) >= self.alpha_volume * volume_max:
             good, open_price = self.high_current_check(ticker, current_price)
-            if not good or current_price >= 1.15 * open_price:
+            if not good or current_price >= self.current_to_open_ratio * open_price:
                 return
             try:
                 response = self.create_order(symbol=ticker, 
@@ -159,7 +161,8 @@ class LiveTrade(object):
 
 if __name__ == "__main__":
     trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=100000, 
-                        volatility=10, stop_ratio=0.95, high_to_current_ratio=0.2)
+                        volatility=10, stop_ratio=0.95, high_to_current_ratio=0.2,
+                        current_to_open_ratio=1.15)
     schedule.every(1).seconds.do(trade.run)
     while True:
         schedule.run_pending()

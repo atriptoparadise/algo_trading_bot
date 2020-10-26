@@ -1,7 +1,7 @@
 import alpaca_trade_api as tradeapi
 import pickle
 import time as t
-from datetime import datetime
+from datetime import datetime, timedelta
 import schedule
 import logging
 import requests
@@ -81,6 +81,8 @@ class LiveTrade(object):
             self.holding_stocks.pop(ticker)
 
     def high_current_check(self, ticker, current_price):
+        if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9:
+            return False, 0
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         idx = 0
         while stock_barset.time[idx].day < datetime.now().day or stock_barset.time[idx].hour < 9:
@@ -116,7 +118,7 @@ class LiveTrade(object):
                                             order_type='market', 
                                             time_in_force='day')
                 self.holding_stocks.update({ticker: (current_price, self.limit_order // current_price)})
-                logging.warning(response)
+                # logging.warning(response)
             except:
                 logging.warning('Order failed')
                 pass

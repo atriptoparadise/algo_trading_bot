@@ -13,7 +13,7 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, alpha_price, alpha_volume, balance, volatility, stop_ratio, high_to_current_ratio, current_to_open_ratio):
+    def __init__(self, alpha_price, alpha_volume, balance, volatility, stop_ratio, high_to_current_ratio, current_to_open_ratio, stop_earning_ratio, stop_earning_ratio_high):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
@@ -22,6 +22,8 @@ class LiveTrade(object):
         self.stop_ratio = stop_ratio
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
+        self.stop_earning_ratio = stop_earning_ratio
+        self.stop_earning_ratio_high = stop_earning_ratio_high
         self.holding_stocks = {}
 
     def setup(self):
@@ -29,6 +31,7 @@ class LiveTrade(object):
                                 SECRET_KEY, 
                                 api_version = 'v2')
         data = self.load_data('data')
+        self.holding_stocks = self.load_data('holding')
         return data, data.keys()
 
     def load_data(self, filename):
@@ -75,6 +78,21 @@ class LiveTrade(object):
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {self.holding_stocks[ticker][0]} @ {datetime.now()}')
                 pass
 
+        if self.holding_stocks[ticker][2] > self.stop_earning_ratio_high * self.holding_stocks[ticker][0] and (current_price - self.holding_stocks[ticker][0]) / (self.holding_stocks[ticker][2] - self.holding_stocks[ticker][0]) <= self.stop_earning_ratio:
+            try:
+                self.create_order(symbol=ticker, 
+                                qty=self.holding_stocks[ticker][1], 
+                                side='sell',
+                                order_type='market',
+                                time_in_force='gtc')
+                logging.warning(f'Sold {ticker} at {current_price} v.s. buy price {self.holding_stocks[ticker][0]} v.s. highest price {self.holding_stocks[ticker][2]} @ {datetime.now()}')
+                self.holding_stocks.pop(ticker)
+            except:
+                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {self.holding_stocks[ticker][0]} v.s. highest price {self.holding_stocks[ticker][2]} @ {datetime.now()}')
+                pass
+
+        self.holding_stocks[ticker][2] = max(current_price, self.holding_stocks[ticker][2])
+
     def high_current_check(self, ticker, current_price):
         if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
             logging.warning(f'Signal after hours - {ticker}, price: {current_price} @ {datetime.now()}')
@@ -115,7 +133,7 @@ class LiveTrade(object):
                                             side='buy', 
                                             order_type='market', 
                                             time_in_force='day')
-                self.holding_stocks.update({ticker: (current_price, self.limit_order // current_price)})
+                self.holding_stocks.update({ticker: (current_price, self.limit_order // current_price, current_price)})
             except:
                 logging.warning('Order failed')
                 pass
@@ -125,7 +143,6 @@ class LiveTrade(object):
 
     def run(self):
         data, ticker_list = self.setup()
-        self.holding_stocks = self.load_data('holding')
         logging.warning(f'Start @ {datetime.now()}')
 
         for ticker in ticker_list:
@@ -157,7 +174,7 @@ class LiveTrade(object):
 if __name__ == "__main__":
     trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=100000, 
                         volatility=10, stop_ratio=0.95, high_to_current_ratio=0.2,
-                        current_to_open_ratio=1.15)
+                        current_to_open_ratio=1.15, stop_earning_ratio=0.4, stop_earning_ratio_high=1.05)
     schedule.every(1).seconds.do(trade.run)
     while True:
         schedule.run_pending()

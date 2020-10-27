@@ -45,20 +45,9 @@ class LiveTrade(object):
         with open(f"data/{filename}.pickle", 'wb') as f:
             pickle.dump(self.holding_stocks, f, pickle.HIGHEST_PROTOCOL)
 
-    def high_volume_fix_15m(self, ticker):
+    def get_today_max(self, ticker):
         stock_barset = self.api.get_barset(ticker, '15Min', limit = 27).df.reset_index()
-        now_or_last = datetime.now().minute % 15 == 0
-
-        if now_or_last or (datetime.now().hour == 9 and datetime.now().minute < 45):
-            high = (stock_barset.iloc[-1, :].tolist()[2] + stock_barset.iloc[-1, :].tolist()[3]) / 2
-            volume = stock_barset.iloc[-1, :].tolist()[-1]
-        else:
-            high = max((stock_barset.iloc[-2, :].tolist()[2] + stock_barset.iloc[-2, :].tolist()[3]) / 2, (stock_barset.iloc[-1, :].tolist()[2] + stock_barset.iloc[-1, :].tolist()[3]) / 2)
-            volume = max(stock_barset.iloc[-2, :].tolist()[-1], stock_barset.iloc[-1, :].tolist()[-1])
-        
-        today_high_so_far = max(stock_barset.iloc[:-1, 2])
-        today_volume_so_far = max(stock_barset.iloc[:-1, -1])
-        return high, volume, today_high_so_far, today_volume_so_far
+        return max(stock_barset.iloc[:-1, 2]), max(stock_barset.iloc[:-1, -1])
 
     def high_volume_moving_15m(self, ticker):
         stock_barset_moving = self.api.get_barset(ticker, '1Min', limit = 15).df.reset_index()
@@ -74,12 +63,17 @@ class LiveTrade(object):
     def holding_risk_control(self, ticker):
         current_price = self.api.get_barset(ticker, '1Min', limit = 1)[ticker][-1].c
         if current_price <= self.stop_ratio * self.holding_stocks[ticker][0]:
-            self.create_order(symbol=ticker, 
-                            qty=self.holding_stocks[ticker][1], 
-                            side='sell',
-                            order_type='market',
-                            time_in_force='gtc')
-            self.holding_stocks.pop(ticker)
+            try:
+                self.create_order(symbol=ticker, 
+                                qty=self.holding_stocks[ticker][1], 
+                                side='sell',
+                                order_type='market',
+                                time_in_force='gtc')
+                logging.warning(f'Sold {ticker} at {current_price} v.s. {self.holding_stocks[ticker][0]} @ {datetime.now()}')
+                self.holding_stocks.pop(ticker)
+            except:
+                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {self.holding_stocks[ticker][0]} @ {datetime.now()}')
+                pass
 
     def high_current_check(self, ticker, current_price):
         if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
@@ -106,14 +100,14 @@ class LiveTrade(object):
             self.holding_risk_control(ticker)
             return
 
-        print(ticker)
-        high_fix, volume_fix, today_high_so_far, today_volume_so_far = self.high_volume_fix_15m(ticker)
         high_moving, volume_moving, current_price = self.high_volume_moving_15m(ticker)
-        volume_max, high_max = max(max(ticker_data['volume']), today_volume_so_far), max(max(ticker_data['high']), today_high_so_far)
+        volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
         
-        if current_price >= self.alpha_price * high_max and max(volume_fix, volume_moving) >= self.alpha_volume * volume_max:
+        if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
+            today_high_so_far, today_volume_so_far = self.get_today_max(ticker)
             good, open_price, after_3pm = self.high_current_check(ticker, current_price)
-            if not good or current_price >= self.current_to_open_ratio * open_price:
+            if not good or current_price >= self.current_to_open_ratio * open_price or current_price < self.alpha_price * today_high_so_far or volume_moving < self.alpha_volume * today_volume_so_far:
+                logging.warning(f'Find first signal but not good - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
                 return
             try:
                 response = self.create_order(symbol=ticker, 
@@ -122,13 +116,12 @@ class LiveTrade(object):
                                             order_type='market', 
                                             time_in_force='day')
                 self.holding_stocks.update({ticker: (current_price, self.limit_order // current_price)})
-                # logging.warning(response)
             except:
                 logging.warning('Order failed')
                 pass
-            logging.warning(f'Signal - {ticker}, price: {current_price}, volume fix: {volume_fix}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max}, volume: {volume_max} \n')
+            logging.warning(f'Signal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
         
-        print(f'{ticker}, volume: {volume_max, volume_fix, volume_moving, today_volume_so_far}, price: {high_max, current_price, high_fix, high_moving, today_high_so_far}')
+        print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
     def run(self):
         data, ticker_list = self.setup()

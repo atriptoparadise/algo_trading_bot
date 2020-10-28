@@ -6,6 +6,7 @@ import schedule
 import logging
 import requests
 import json
+import time as t
 from config import *
 
 logfile = 'logs/signal_{}.log'.format(datetime.now().date())
@@ -35,8 +36,9 @@ class PortfolioMonitor(LiveTrade):
                 pass
 
     def get_closed_orders(self):
-        r = requests.get(ORDERED_URL, headers=HEADERS)
-        self.closed_orders = json.loads(r.content)
+        response = requests.get(ORDERED_URL, headers=HEADERS)
+        content = json.loads(response.content)
+        self.closed_orders = [item for item in content if item['status'] == 'filled' or item['status'] == 'closed']
 
     def get_highest_price(self, ticker):
         order_details = next(item for item in self.closed_orders if item['symbol'] == ticker)
@@ -44,7 +46,7 @@ class PortfolioMonitor(LiveTrade):
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         
         idx = 0
-        while stock_barset.time[idx] < ordered_time:
+        while idx < 390 and stock_barset.time[idx] < ordered_time - timedelta(minutes=1):
             idx += 1
         return stock_barset.iloc[idx:, 2].max()
 
@@ -56,6 +58,7 @@ class PortfolioMonitor(LiveTrade):
             try:
                 self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
                 logging.warning(f'Sold {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Sold {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
@@ -65,6 +68,7 @@ class PortfolioMonitor(LiveTrade):
             try:
                 self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
                 logging.warning(f'Sold {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                print(f'Sold {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
                 pass
@@ -72,7 +76,7 @@ class PortfolioMonitor(LiveTrade):
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor(alpha_price=0.9, alpha_volume=1.3, balance=100000, 
-                        volatility=10, stop_ratio=0.95, high_to_current_ratio=0.2,
+                        volatility=10, stop_ratio=0.96, high_to_current_ratio=0.2,
                         current_to_open_ratio=1.15, stop_earning_ratio=0.5, stop_earning_ratio_high=1.07)
     schedule.every(59).seconds.do(monitor.run)
     while True:

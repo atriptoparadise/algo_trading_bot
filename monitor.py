@@ -25,8 +25,14 @@ class PortfolioMonitor(LiveTrade):
         positions = self.get_positions()
         self.get_closed_orders()
         logging.warning(f'Portfolio monitor start @ {datetime.now()}')
+
         for ticker in self.holding_stocks:
-            self.portfolio_monitor(ticker, positions)
+            try:
+                self.portfolio_monitor(ticker, positions)
+            except:
+                t.sleep(20)
+                self.portfolio_monitor(ticker, positions)
+                pass
 
     def get_closed_orders(self):
         r = requests.get(ORDERED_URL, headers=HEADERS)
@@ -48,29 +54,19 @@ class PortfolioMonitor(LiveTrade):
 
         if current_price <= self.stop_ratio * entry_price:
             try:
-                self.create_order(symbol=ticker, 
-                                qty=qty, 
-                                side='sell',
-                                order_type='market',
-                                time_in_force='gtc')
+                self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
                 logging.warning(f'Sold {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
             except:
-                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {self.holding_stocks[ticker][0]} @ {datetime.now()}')
+                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
         
         highest_price = self.get_highest_price(ticker)
-
         if highest_price > self.stop_earning_ratio_high * entry_price and (current_price - entry_price) / (highest_price - entry_price) <= self.stop_earning_ratio:
             try:
-                self.create_order(symbol=ticker, 
-                                qty=self.holding_stocks[ticker][1], 
-                                side='sell',
-                                order_type='market',
-                                time_in_force='gtc')
-                logging.warning(f'Sold {ticker} at {current_price} v.s. buy price {self.holding_stocks[ticker][0]} v.s. highest price {self.holding_stocks[ticker][2]} @ {datetime.now()}')
-                self.holding_stocks.pop(ticker)
+                self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
+                logging.warning(f'Sold {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
-                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {self.holding_stocks[ticker][0]} v.s. highest price {self.holding_stocks[ticker][2]} @ {datetime.now()}')
+                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
                 pass
 
 

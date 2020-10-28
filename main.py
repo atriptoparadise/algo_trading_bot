@@ -17,7 +17,7 @@ class LiveTrade(object):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
-        self.limit_order = balance / (volatility * 2)
+        self.limit_order = balance / (volatility * 3)
         self.api = None
         self.stop_ratio = stop_ratio
         self.current_to_open_ratio = current_to_open_ratio
@@ -81,7 +81,7 @@ class LiveTrade(object):
         if datetime.now().hour < 15:
             return True, open_price, 1
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
-            return True, open_price, 2
+            return True, open_price, 3
         return False, open_price, 0
 
     def find_signal(self, ticker, ticker_data):
@@ -93,7 +93,10 @@ class LiveTrade(object):
         
         if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
             today_high_so_far, today_volume_so_far = self.get_today_max(ticker)
-            good, open_price, after_3pm = self.high_current_check(ticker, current_price)
+            try:
+                good, open_price, after_3pm = self.high_current_check(ticker, current_price)
+            except:
+                return
             if current_price < self.alpha_price * today_high_so_far or volume_moving < self.alpha_volume * today_volume_so_far:
                 logging.warning(f'Find first signal but today high/volume cannot fit - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
                 return

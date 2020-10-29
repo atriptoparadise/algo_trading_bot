@@ -3,6 +3,7 @@ import pickle
 import time as t
 from datetime import datetime, timedelta
 import schedule
+import numpy as np
 import logging
 import requests
 import json
@@ -84,10 +85,15 @@ class LiveTrade(object):
             return True, open_price, 3
         return False, open_price, 0
 
-    def find_signal(self, ticker, ticker_data):
-        if ticker in self.holding_stocks:
-            return
+    def if_exceed_high(self, current_price, high_list, high_max):
+        if current_price < high_max:
+            return 1
+        idx_high = np.argmax(np.array(high_list))
+        if len(high_list) - idx_high >= 15:
+            return 1.5
+        return 1
 
+    def find_signal(self, ticker, ticker_data):
         high_moving, volume_moving, current_price = self.high_volume_moving_15m(ticker)
         volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
         
@@ -103,9 +109,11 @@ class LiveTrade(object):
             if not good or current_price >= self.current_to_open_ratio * open_price:
                 logging.warning(f'Find first signal but not good - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
                 return
+            
+            exceed_high = self.if_exceed_high(current_price, ticker_data['high'], high_max)
             try:
                 response = self.create_order(symbol=ticker, 
-                                            qty=self.limit_order * after_3pm // current_price, 
+                                            qty=self.limit_order * after_3pm * exceed_high // current_price, 
                                             side='buy', 
                                             order_type='market', 
                                             time_in_force='day')
@@ -119,9 +127,10 @@ class LiveTrade(object):
     def run(self):
         data, ticker_list = self.setup()
         positions = self.get_positions()
+        run_list = [ticker for ticker in ticker_list if ticker not in self.holding_stocks]
         logging.warning(f'Start @ {datetime.now()}')
-
-        for ticker in ticker_list:
+        
+        for ticker in run_list:
             try:
                 self.find_signal(ticker, data[ticker])
             except:

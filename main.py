@@ -14,7 +14,7 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, alpha_price, alpha_volume, balance, volatility, stop_ratio, high_to_current_ratio, current_to_open_ratio, stop_earning_ratio, stop_earning_ratio_high):
+    def __init__(self, alpha_price, alpha_volume, balance, volatility, high_to_current_ratio, current_to_open_ratio, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
@@ -46,9 +46,9 @@ class LiveTrade(object):
 
     def get_positions(self):
         response = requests.get("{}/v2/positions".format(BASE_URL), headers=HEADERS)
-        r = json.loads(response.content)
-        self.holding_stocks = [item['symbol'] for item in r]
-        return r
+        content = json.loads(response.content)
+        self.holding_stocks = [item['symbol'] for item in content]
+        return content
 
     def get_today_max(self, ticker):
         stock_barset = self.api.get_barset(ticker, '15Min', limit = 27).df.reset_index()
@@ -60,10 +60,9 @@ class LiveTrade(object):
         while (last - stock_barset_moving.time[idx]).seconds > 900:
             idx += 1
         volume_moving = stock_barset_moving.iloc[idx:, -1].sum()
-        high_moving = (stock_barset_moving.iloc[idx:, 2].mean() + stock_barset_moving.iloc[idx:, 3].mean()) / 2
-
         current_price = stock_barset_moving.iloc[-1, -2]
-        return high_moving, volume_moving, current_price
+
+        return volume_moving, current_price
 
     def high_current_check(self, ticker, current_price):
         if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
@@ -94,7 +93,7 @@ class LiveTrade(object):
         return 1
 
     def find_signal(self, ticker, ticker_data):
-        high_moving, volume_moving, current_price = self.high_volume_moving_15m(ticker)
+        volume_moving, current_price = self.high_volume_moving_15m(ticker)
         volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
         
         if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
@@ -121,15 +120,14 @@ class LiveTrade(object):
                 logging.warning('Order failed')
                 pass
             logging.warning(f'Signal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
-
-        print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
+            print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
     def run(self):
         data, ticker_list = self.setup()
         positions = self.get_positions()
         run_list = [ticker for ticker in ticker_list if ticker not in self.holding_stocks]
         logging.warning(f'Start @ {datetime.now()}')
-        
+
         for ticker in run_list:
             try:
                 self.find_signal(ticker, data[ticker])
@@ -153,8 +151,8 @@ class LiveTrade(object):
 
 if __name__ == "__main__":
     trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=100000, 
-                        volatility=10, stop_ratio=0.95, high_to_current_ratio=0.2,
-                        current_to_open_ratio=1.15, stop_earning_ratio=0.7, stop_earning_ratio_high=1.07)
+                        volatility=10, high_to_current_ratio=0.2, current_to_open_ratio=1.15, 
+                        stop_ratio=0.96, stop_earning_ratio=0.5, stop_earning_ratio_high=1.07)
     schedule.every(1).seconds.do(trade.run)
     while True:
         schedule.run_pending()

@@ -65,8 +65,8 @@ class LiveTrade(object):
         return volume_moving, current_price
 
     def high_current_check(self, ticker, current_price):
-        if datetime.now().weekday() >= 5 or datetime.now().hour >= 16 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
-            logging.warning(f'Signal after hours - {ticker}, price: {current_price} @ {datetime.now()}')
+        if datetime.now().weekday() >= 5 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
+            logging.warning(f'Signal pre-market - {ticker}, price: {current_price} @ {datetime.now()}')
             return False, 0, 0
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         idx = 0
@@ -80,22 +80,27 @@ class LiveTrade(object):
 
         if datetime.now().hour < 15:
             return True, open_price, 1
+        if datetime.now().hour >= 16:
+            logging.warning(f'Signal after-hours - {ticker}, price: {current_price} @ {datetime.now()}')
+            logging.warning(f'High close check: {current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio}')
+            return False, 0, 0
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
             return True, open_price, 3
+        logging.warning(f"Signal can't satisfy high current check - {ticker}, price: {current_price} @ {datetime.now()}")
         return False, open_price, 0
 
     def if_exceed_high(self, current_price, high_list, high_max):
         if current_price < high_max:
-            return 1
+            return 1, False
         idx_high = np.argmax(np.array(high_list))
-        if len(high_list) - idx_high >= 15:
-            return 1.5
-        return 1
+        if len(high_list) - idx_high >= 20:
+            return 1.5, True
+        return 1, False
 
     def find_signal(self, ticker, ticker_data):
         volume_moving, current_price = self.high_volume_moving_15m(ticker)
         volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
-        
+
         if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
             today_high_so_far, today_volume_so_far = self.get_today_max(ticker)
             try:
@@ -109,7 +114,7 @@ class LiveTrade(object):
                 logging.warning(f'Find first signal but not good - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
                 return
             
-            exceed_high = self.if_exceed_high(current_price, ticker_data['high'], high_max)
+            exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], high_max)
             try:
                 response = self.create_order(symbol=ticker, 
                                             qty=self.limit_order * after_3pm * exceed_high // current_price, 
@@ -119,6 +124,8 @@ class LiveTrade(object):
             except:
                 logging.warning('Order failed')
                 pass
+            if exceeded:
+                logging.warning(f'{ticker} exceeded at lease 20 days high')
             logging.warning(f'Signal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
             print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
@@ -150,8 +157,8 @@ class LiveTrade(object):
 
 
 if __name__ == "__main__":
-    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=100000, 
-                        volatility=10, high_to_current_ratio=0.2, current_to_open_ratio=1.15, 
+    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=8000, 
+                        volatility=8, high_to_current_ratio=0.2, current_to_open_ratio=1.15, 
                         stop_ratio=0.96, stop_earning_ratio=0.5, stop_earning_ratio_high=1.07)
     schedule.every(1).seconds.do(trade.run)
     while True:

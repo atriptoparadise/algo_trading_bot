@@ -14,17 +14,14 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, alpha_price, alpha_volume, balance, volatility, high_to_current_ratio, current_to_open_ratio, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
+    def __init__(self, alpha_price, alpha_volume, balance, volatility, high_to_current_ratio, current_to_open_ratio):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
         self.limit_order = balance / (volatility * 3)
         self.api = None
-        self.stop_ratio = stop_ratio
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
-        self.stop_earning_ratio = stop_earning_ratio
-        self.stop_earning_ratio_high = stop_earning_ratio_high
         self.holding_stocks = []
 
     def setup(self):
@@ -158,8 +155,7 @@ class LiveTrade(object):
 
 if __name__ == "__main__":
     trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=8000, 
-                        volatility=8, high_to_current_ratio=0.2, current_to_open_ratio=1.15, 
-                        stop_ratio=0.96, stop_earning_ratio=0.5, stop_earning_ratio_high=1.07)
+                        volatility=8, high_to_current_ratio=0.2, current_to_open_ratio=1.15)
     schedule.every(1).seconds.do(trade.run)
     while True:
         schedule.run_pending()

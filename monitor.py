@@ -1,4 +1,3 @@
-from main import LiveTrade
 import alpaca_trade_api as tradeapi
 from datetime import datetime, timedelta
 import pytz
@@ -14,18 +13,23 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 eastern = pytz.timezone('US/Eastern')
 
 
-class PortfolioMonitor(LiveTrade):
-    def __init__(self, alpha_price, alpha_volume, balance, volatility, high_to_current_ratio, current_to_open_ratio):
-        super().__init__(alpha_price, alpha_volume, balance, volatility, high_to_current_ratio, current_to_open_ratio)
+class PortfolioMonitor(object):
+    def __init__(self):
         self.closed_orders = []
         self.api = tradeapi.REST(API_KEY, 
                                 SECRET_KEY, 
                                 api_version = 'v2')
 
+    def get_positions(self):
+        response = requests.get("{}/v2/positions".format(BASE_URL), headers=HEADERS)
+        content = json.loads(response.content)
+        self.holding_stocks = [item['symbol'] for item in content]
+        return content
+
     def run(self, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         positions = self.get_positions()
         self.get_closed_orders()
-        print(f'Portfolio monitor start @ {datetime.now()}')
+        # print(f'Portfolio monitor start @ {datetime.now()}')
 
         for ticker in self.holding_stocks:
             try:
@@ -75,8 +79,7 @@ class PortfolioMonitor(LiveTrade):
 
 
 if __name__ == "__main__":
-    monitor = PortfolioMonitor(alpha_price=0.9, alpha_volume=1.3, balance=8000, 
-                        volatility=8,  high_to_current_ratio=0.2, current_to_open_ratio=1.15)
-    schedule.every(59).seconds.do(monitor.run, stop_ratio=0.95, stop_earning_ratio=0.5, stop_earning_ratio_high=1.07)
+    monitor = PortfolioMonitor()
+    schedule.every(30).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.07)
     while True:
         schedule.run_pending()

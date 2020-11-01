@@ -13,12 +13,13 @@
 2. Find signals during trading hours
    - Run "python main.py", which has been scheduled to run uninterruptedly;
    - Go to the logs folder to catch the signals;
-   - If you connect with Alpaca live/paper trading platform, it will automatically create orders by your setting<br/>
+   - If you connect with Alpaca live/paper trading platform, it will automatically create orders by your setting
+   - Run "python monitor.py" to monitor holding stocks and sell by your setting<br/>
 <br/>
 
 
 
-#### Find signals in live trading
+#### Find naive signals in live trading
 
 1. Moving or current 15-min aggregated volume is larger than the threshold (> 1) * the highest volume in previous period;
 

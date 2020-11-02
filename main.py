@@ -29,9 +29,9 @@ class LiveTrade(object):
         self.api = tradeapi.REST(API_KEY, 
                                 SECRET_KEY, 
                                 api_version = 'v2')
+        self.get_holding_stocks()
         data = self.load_data('data_new')
         ticker_list = data.keys()
-        positions = self.get_positions()
         run_list = [ticker for ticker in ticker_list if ticker not in self.holding_stocks]
         return data, run_list
 
@@ -45,15 +45,10 @@ class LiveTrade(object):
                     break
         return objects[0]
 
-    def get_positions(self):
+    def get_holding_stocks(self):
         response = requests.get("{}/v2/positions".format(BASE_URL), headers=HEADERS)
         content = json.loads(response.content)
         self.holding_stocks = [item['symbol'] for item in content]
-        return content
-
-    def get_today_max(self, ticker):
-        stock_barset = self.api.get_barset(ticker, '15Min', limit = 27).df.reset_index()
-        return max(stock_barset.iloc[:-1, 2]), max(stock_barset.iloc[:-1, -1])
 
     def get_moving_volume(self, ticker, date):
         """Return 15-min moving aggregated volume and last price"""
@@ -113,7 +108,11 @@ class LiveTrade(object):
 
             if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
                 good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
-                if not good or current_price >= self.current_to_open_ratio * open_price:
+                if not good:
+                    logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
+                    return
+                if current_price >= self.current_to_open_ratio * open_price:
+                    logging.warning(f'Current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price})')
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
                     return
                 

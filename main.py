@@ -108,7 +108,7 @@ class LiveTrade(object):
                 logging.warning(f'Find first signal but today high/volume cannot fit - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
                 return
             if not good or current_price >= self.current_to_open_ratio * open_price:
-                logging.warning(f'Find first signal but not good - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
+                logging.warning(f'Find first signal but not good - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max}, volume: {volume_max} \n')
                 return
             
             exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], high_max)
@@ -123,7 +123,7 @@ class LiveTrade(object):
                 pass
             if exceeded:
                 logging.warning(f'{ticker} exceeded at lease 20 days high')
-            logging.warning(f'Signal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
+            logging.warning(f'\nSignal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max}, volume: {volume_max} \n')
             print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
     def run(self):

@@ -1,10 +1,9 @@
-import alpaca_trade_api as tradeapi
-import pandas as pd 
 import numpy as np
 import pickle
 import requests, json
 from datetime import datetime, timedelta
 from config import *
+from joblib import Parallel, delayed
 
 def load_data(filename):
 	with open(f"data/{filename}.pickle", "rb") as f:
@@ -31,26 +30,28 @@ def get_data(ticker, start_date, end_date):
     return ticker_data
 
 def init_data(ticker, data, midnight):
-    monday = [datetime(2020, 8, 31).date(), datetime(2020, 9, 7).date(), 
-                datetime(2020, 9, 14).date(), datetime(2020, 9, 21).date(),
-                datetime(2020, 9, 28).date(), datetime(2020, 10, 5).date(),
-                datetime(2020, 10, 12).date(), datetime(2020, 10, 19).date(),
-                datetime(2020, 10, 26).date()]
+    start = datetime(2020, 8, 31).date()
+    today = datetime.now().date()
+    if midnight:
+        today = today - timedelta(days=1)
+    days_delta = (today - start).days
 
     data[ticker] = {'volume': [], 'high': [], 'time': [], 'date': None}
-    for start_date in monday:
+    for i in range(days_delta + 1):
+        date = start + timedelta(days=i)
+        if date.weekday() >= 5:
+            continue
         try:
-            res = get_data(ticker, start_date, start_date + timedelta(days=4))
+            res = get_data(ticker, date, date)
             data[ticker]['volume'].append(res['volume'][0])
             data[ticker]['high'].append(res['high'][0])
             data[ticker]['time'].append(res['time'][0])
         except:
             pass
     
-    date = datetime.now().date()
-    while date.weekday() >= 5:
-        date = date - timedelta(days=1)
-    data[ticker]['date'] = date
+    while today.weekday() >= 5:
+        today = today - timedelta(days=1)
+    data[ticker]['date'] = today
 
     return data
 
@@ -80,19 +81,17 @@ def run(ticker_list=None, midnight=False):
     saved_data = load_data('data_new')
     saved_list = saved_data.keys()
 
-    if not ticker_list:
-        ticker_list = saved_list
-
     today = datetime.now().date()
     if midnight:
         today = today - timedelta(days=1)
     
-    for ticker in ticker_list:
-        if ticker not in saved_list:
-            init_data(ticker, saved_data, midnight)
-        else:
-            if today == saved_data[ticker]['date']:
-                print(f'{ticker} is already up-to-date')
+    if not ticker_list:
+        ticker_list = saved_list
+        Parallel(n_jobs=4)(delayed(update_ticker)(ticker, today, saved_data[ticker]['date'], saved_data) for ticker in ticker_list if ticker in saved_list)
+    else:
+        for ticker in ticker_list:
+            if ticker not in saved_list:
+                init_data(ticker, saved_data, midnight)
             else:
                 update_ticker(ticker, today, saved_data[ticker]['date'], saved_data)
                 print(f'{ticker} updated')
@@ -100,11 +99,5 @@ def run(ticker_list=None, midnight=False):
     save_data('data_new', saved_data)
 
 
-# ticker_list = load_data('watch_list')
-# data = load_data('data_new')
-
-# data = init_data(ticker_list, data)
-# data = temp(ticker_list, data)
-# save_data('data_new', data)
-# print(data['AAPL'])
-run(['NIO'])
+if __name__ == "__main__":
+    run(ticker_list=None, midnight=False)

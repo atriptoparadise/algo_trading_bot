@@ -53,8 +53,6 @@ def init_data(ticker, data, midnight):
         today = today - timedelta(days=1)
     data[ticker]['date'] = today
 
-    return data
-
 def update_ticker(ticker, today, last_updated_date, saved_data):
     while today.weekday() >= 5:
         today = today - timedelta(days=1)

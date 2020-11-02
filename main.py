@@ -2,6 +2,7 @@ import alpaca_trade_api as tradeapi
 import pickle
 import time as t
 from datetime import datetime, timedelta
+from joblib import Parallel, delayed
 import schedule
 import numpy as np
 import logging
@@ -28,8 +29,11 @@ class LiveTrade(object):
         self.api = tradeapi.REST(API_KEY, 
                                 SECRET_KEY, 
                                 api_version = 'v2')
-        data = self.load_data('data')
-        return data, data.keys()
+        data = self.load_data('data_new')
+        ticker_list = data.keys()
+        positions = self.get_positions()
+        run_list = [ticker for ticker in ticker_list if ticker not in self.holding_stocks]
+        return data, run_list
 
     def load_data(self, filename):
         with open(f"data/{filename}.pickle", "rb") as f:
@@ -51,19 +55,20 @@ class LiveTrade(object):
         stock_barset = self.api.get_barset(ticker, '15Min', limit = 27).df.reset_index()
         return max(stock_barset.iloc[:-1, 2]), max(stock_barset.iloc[:-1, -1])
 
-    def high_volume_moving_15m(self, ticker):
-        stock_barset_moving = self.api.get_barset(ticker, '1Min', limit = 15).df.reset_index()
-        idx, last = 0, stock_barset_moving.time[14]
-        while (last - stock_barset_moving.time[idx]).seconds > 900:
-            idx += 1
-        volume_moving = stock_barset_moving.iloc[idx:, -1].sum()
-        current_price = stock_barset_moving.iloc[-1, -2]
+    def get_moving_volume(self, ticker, date):
+        """Return 15-min moving aggregated volume and last price"""
 
-        return volume_moving, current_price
+        response = requests.get(f'{POLY_URL}/aggs/ticker/{ticker}/range/1/minute/{date}/{date}?sort=desc&apiKey={API_KEY}')
+        content = json.loads(response.content)['results']
+        last_time = content[0]['t']
+        idx = 14
+        while last_time - content[idx]['t'] > 900000:
+            idx -= 1
+        return sum([i['v'] for i in content[:idx + 1]]), content[0]['c']
 
-    def high_current_check(self, ticker, current_price):
+    def high_current_check(self, ticker, current_price, volume_moving):
         if datetime.now().weekday() >= 5 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
-            logging.warning(f'Signal pre-market - {ticker}, price: {current_price} @ {datetime.now()}')
+            logging.warning(f'Signal weekend or before 9:30 am - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
             return False, 0, 0
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         idx = 0
@@ -76,69 +81,71 @@ class LiveTrade(object):
         open_price = stock_barset.iloc[idx, 1]
 
         if datetime.now().hour < 15:
+            logging.warning(f'Signal before 15 pm - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
             return True, open_price, 1
         if datetime.now().hour >= 16:
-            logging.warning(f'Signal after-hours - {ticker}, price: {current_price} @ {datetime.now()}')
+            logging.warning(f'Signal after 16 pm - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
             logging.warning(f'High close check: {current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio}')
             return False, 0, 0
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
+            logging.warning(f'Signal after 15 pm and high current check good - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
             return True, open_price, 3
-        logging.warning(f"Signal can't satisfy high current check - {ticker}, price: {current_price} @ {datetime.now()}")
+        logging.warning(f"Signal can't satisfy high current check - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}")
         return False, open_price, 0
 
-    def if_exceed_high(self, current_price, high_list, high_max):
+    def if_exceed_high(self, current_price, high_list, time_list, high_max):
         if current_price < high_max:
             return 1, False
         idx_high = np.argmax(np.array(high_list))
-        if len(high_list) - idx_high >= 20:
+        high_time = time_list[idx_high]
+        days_delta = (datetime.now() - datetime.strptime(high_time, '%Y-%m-%d %H:%M:%S')).days
+        if days_delta >= 20:
             return 1.5, True
         return 1, False
 
-    def find_signal(self, ticker, ticker_data):
-        volume_moving, current_price = self.high_volume_moving_15m(ticker)
-        volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
+    def find_signal(self, ticker, ticker_data, today):
+        logfile = 'logs/signal_{}.log'.format(datetime.now().date())
+        logging.basicConfig(filename=logfile, level=logging.WARNING)
 
-        if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
-            today_high_so_far, today_volume_so_far = self.get_today_max(ticker)
-            try:
-                good, open_price, after_3pm = self.high_current_check(ticker, current_price)
-            except:
-                return
-            if current_price < self.alpha_price * today_high_so_far or volume_moving < self.alpha_volume * today_volume_so_far:
-                logging.warning(f'Find first signal but today high/volume cannot fit - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max, today_high_so_far}, volume: {volume_max, today_volume_so_far} \n')
-                return
-            if not good or current_price >= self.current_to_open_ratio * open_price:
-                logging.warning(f'Find first signal but not good - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max}, volume: {volume_max} \n')
-                return
-            
-            exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], high_max)
-            try:
+        try:
+            volume_moving, current_price = self.get_moving_volume(ticker, today)
+            volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
+
+            if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
+                good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
+                if not good or current_price >= self.current_to_open_ratio * open_price:
+                    logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
+                    return
+                
+                exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 response = self.create_order(symbol=ticker, 
                                             qty=self.limit_order * after_3pm * exceed_high // current_price, 
                                             side='buy', 
                                             order_type='market', 
                                             time_in_force='day')
-            except:
-                logging.warning('Order failed')
-                pass
-            if exceeded:
-                logging.warning(f'{ticker} exceeded at lease 20 days high')
-            logging.warning(f'\nSignal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \nPrevious highest price: {high_max}, volume: {volume_max} \n')
-            print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
+                if exceeded:
+                    logging.warning(f'{ticker} exceeded at lease 20 days high')
+                
+                logging.warning(f'Signal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} - Previous highest price: {high_max}, volume: {volume_max} \n')
+                print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
+        except IndexError:
+            pass
 
     def run(self):
-        data, ticker_list = self.setup()
-        positions = self.get_positions()
-        run_list = [ticker for ticker in ticker_list if ticker not in self.holding_stocks]
-        logging.warning(f'Start @ {datetime.now()}')
+        data, run_list = self.setup()
+        today = '2020-10-30'
 
-        for ticker in run_list:
-            try:
-                self.find_signal(ticker, data[ticker])
-            except:
-                t.sleep(20)
-                self.find_signal(ticker, data[ticker])
-                pass
+        print(f'Start @ {datetime.now()}')
+        
+        Parallel(n_jobs=4)(delayed(self.find_signal)(ticker, data[ticker], today) for ticker in run_list)
+
+        # jobs = []
+        # for ticker in run_list:
+            # self.find_signal(ticker, data[ticker], today)
+
+            # p = multiprocessing.Process(target=self.find_signal, args=(ticker, data[ticker], today))
+            # jobs.append(p)
+            # p.start()
 
     def create_order(self, symbol, qty, side, order_type, time_in_force):
         data = {

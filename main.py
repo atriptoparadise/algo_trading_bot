@@ -131,22 +131,6 @@ class LiveTrade(object):
         except IndexError:
             pass
 
-    def run(self):
-        data, run_list = self.setup()
-        today = '2020-10-30'
-
-        print(f'Start @ {datetime.now()}')
-        
-        Parallel(n_jobs=4)(delayed(self.find_signal)(ticker, data[ticker], today) for ticker in run_list)
-
-        # jobs = []
-        # for ticker in run_list:
-            # self.find_signal(ticker, data[ticker], today)
-
-            # p = multiprocessing.Process(target=self.find_signal, args=(ticker, data[ticker], today))
-            # jobs.append(p)
-            # p.start()
-
     def create_order(self, symbol, qty, side, order_type, time_in_force):
         data = {
             "symbol": symbol,
@@ -159,6 +143,13 @@ class LiveTrade(object):
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         return json.loads(r.content)
 
+    def run(self, date=None):
+        data, run_list = self.setup()
+        if not date:
+            date = datetime.today().strftime('%Y-%m-%d')
+
+        print(f'Start @ {datetime.now()}')
+        Parallel(n_jobs=4)(delayed(self.find_signal)(ticker, data[ticker], date) for ticker in run_list)
 
 if __name__ == "__main__":
     trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=8000, 

@@ -3,6 +3,7 @@ import pickle
 import time as t
 from datetime import datetime, timedelta
 from joblib import Parallel, delayed
+from pandas.tseries.offsets import BDay
 import schedule
 import numpy as np
 import logging
@@ -64,12 +65,16 @@ class LiveTrade(object):
         return sum([i['v'] for i in content[:idx + 1]]), content[0]['c']
 
     def nine_days_close_check(self, ticker, current_price, today):
-        today = datetime.strptime(today, '%Y-%m-%d')
-        nine_days = '2020-10-20'
+        """Return True if current price is higher than close price nine business days ago"""
+
+        nine_days = (datetime.strptime(today, '%Y-%m-%d') - BDay(9)).date()
         response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{nine_days}?apiKey={API_KEY}')
         nine_days_close = json.loads(response.content)['close']
+
         if current_price >= nine_days_close:
+            logging.warning(f'Exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
             return True, nine_days_close
+        logging.warning(f'Cannot exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
         return False, nine_days_close
 
     def high_current_check(self, ticker, current_price, volume_moving):
@@ -119,6 +124,8 @@ class LiveTrade(object):
 
             if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
                 good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
+                exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
+                
                 if not good:
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
                     return
@@ -128,9 +135,7 @@ class LiveTrade(object):
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
                     return
                 
-                exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
                 if not exceed_nine_days_close:
-                    logging.warning(f'Cannot exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
                     return
                 

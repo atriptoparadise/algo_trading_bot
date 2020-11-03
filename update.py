@@ -3,7 +3,7 @@ import pickle
 import requests, json
 from datetime import datetime, timedelta
 from config import *
-from joblib import Parallel, delayed
+
 
 def load_data(filename):
 	with open(f"data/{filename}.pickle", "rb") as f:
@@ -84,8 +84,8 @@ def run(ticker_list=None, midnight=False):
         today = today - timedelta(days=1)
     
     if not ticker_list:
-        ticker_list = saved_list
-        Parallel(n_jobs=4)(delayed(update_ticker)(ticker, today, saved_data[ticker]['date'], saved_data) for ticker in ticker_list if ticker in saved_list)
+        for ticker in saved_list:
+            update_ticker(ticker, today, saved_data[ticker]['date'], saved_data)
     else:
         for ticker in ticker_list:
             if ticker not in saved_list:

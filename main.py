@@ -123,7 +123,10 @@ class LiveTrade(object):
             volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
 
             if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
-                good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
+                try:
+                    good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
+                except KeyError:
+                    pass
                 exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
                 
                 if not good:
@@ -148,7 +151,7 @@ class LiveTrade(object):
                 if exceeded:
                     logging.warning(f'{ticker} exceeded at least 20 days high')
                 
-                logging.warning(f'Signal - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} - Previous highest price: {high_max}, volume: {volume_max} \n')
+                logging.warning(f'Ordered! - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} - Previous highest price: {high_max}, volume: {volume_max} \n')
                 print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
         except IndexError:
             pass

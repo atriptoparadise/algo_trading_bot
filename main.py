@@ -1,5 +1,6 @@
 import alpaca_trade_api as tradeapi
 import pickle
+import pandas as pd
 import time as t
 from datetime import datetime, timedelta
 from joblib import Parallel, delayed
@@ -72,9 +73,9 @@ class LiveTrade(object):
         nine_days_close = json.loads(response.content)['close']
 
         if current_price >= nine_days_close:
-            logging.warning(f'Exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
+            logging.warning(f'Exceed nine days close {ticker} - current price: {current_price}, nine_days_close: {nine_days_close}')
             return True, nine_days_close
-        logging.warning(f'Cannot exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
+        logging.warning(f'Cannot exceed nine days close {ticker} - current price: {current_price}, nine_days_close: {nine_days_close}')
         return False, nine_days_close
 
     def high_current_check(self, ticker, current_price, volume_moving):
@@ -114,6 +115,15 @@ class LiveTrade(object):
             return 1.5, True
         return 1, False
 
+    def add_data(self, new_signal):
+        df = pd.read_csv('data/signals.csv')
+        new = pd.Series(new_signal, index = ['symbol', 'date', 'weekday', 'after_3_pm',
+                                            'high_current_or_close_check', 'nine_days_close_check',
+                                            'if_exceed_previous_high', 'moving_volume', 'previous_volume_max',
+                                            'volume_ratio', 'entry_price', 'previous_high'])
+        df = df.append(new, ignore_index=True)
+        df.to_csv('data/signals.csv')
+
     def find_signal(self, ticker, ticker_data, today):
         logfile = 'logs/signal_{}.log'.format(datetime.now().date())
         logging.basicConfig(filename=logfile, level=logging.WARNING)
@@ -126,7 +136,7 @@ class LiveTrade(object):
                 try:
                     good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
                 except KeyError:
-                    pass
+                    return
                 exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
                 
                 if not good:
@@ -137,12 +147,18 @@ class LiveTrade(object):
                     logging.warning(f'Current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price})')
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
                     return
-                
+
+                exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
+
                 if not exceed_nine_days_close:
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
+                    d = datetime.strptime(today, '%Y-%m-%d').date()
+                    new_signal = [ticker, d, d.weekday, after_3pm, 1 if good and after_3pm else 0, 
+                                exceed_nine_days_close, 1 if exceeded else 0, volume_moving, 
+                                volume_max, volume_moving / volume_max, current_price, high_max]
+                    self.add_data(new_signal)
                     return
                 
-                exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 response = self.create_order(symbol=ticker, 
                                             qty=self.limit_order * after_3pm * exceed_high // current_price, 
                                             side='buy', 
@@ -151,6 +167,12 @@ class LiveTrade(object):
                 if exceeded:
                     logging.warning(f'{ticker} exceeded at least 20 days high')
                 
+                d = datetime.strptime(today, '%Y-%m-%d').date()
+                new_signal = [ticker, d, d.weekday, after_3pm, 1 if good and after_3pm else 0, 
+                            exceed_nine_days_close, 1 if exceeded else 0, volume_moving, 
+                            volume_max, volume_moving / volume_max, current_price, high_max]
+                self.add_data(new_signal)
+
                 logging.warning(f'Ordered! - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} - Previous highest price: {high_max}, volume: {volume_max} \n')
                 print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
         except IndexError:

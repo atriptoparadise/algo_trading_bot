@@ -6,3 +6,4 @@ __pycache__/
 config.py
 test.py
 holding.pickle
+data/signals.csv

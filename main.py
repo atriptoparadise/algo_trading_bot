@@ -97,7 +97,12 @@ class LiveTrade(object):
             return True, open_price, 1
         if datetime.now().hour >= 16:
             logging.warning(f'Signal after 16:00 - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
-            logging.warning(f'High close check: {current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio}')
+            high_close_check = current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio
+            logging.warning(f'High close check: {high_close_check}')
+            print(ticker, high_close_check)
+            if high_close_check:
+                print(ticker)
+                return False, -1, 3
             return False, 0, 0
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
             logging.warning(f'Signal after 15:00 and high current check good - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
@@ -115,12 +120,24 @@ class LiveTrade(object):
             return 1.5, True
         return 1, False
 
-    def add_data(self, new_signal):
-        df = pd.read_csv('data/signals.csv')
+    def add_data(self, ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price):
+        date = datetime.strptime(today, '%Y-%m-%d').date()
+        weekday = int(date.weekday()) + 1
+        new_signal = [ticker, date, weekday, 0 if after_3pm == 1 else 1, 
+                        1 if after_3pm == 3 and (good or open_price == -1) else 0, exceed_nine_days_close, 
+                        1 if exceeded else 0, volume_moving, volume_max, 
+                        volume_moving / volume_max, current_price, high_max, open_price,
+                        current_price * volume_moving, 1 if current_price * volume_moving >= 20000000 else 0]
+        
         new = pd.Series(new_signal, index = ['symbol', 'date', 'weekday', 'after_3_pm',
                                             'high_current_or_close_check', 'nine_days_close_check',
                                             'if_exceed_previous_high', 'moving_volume', 'previous_volume_max',
-                                            'volume_ratio', 'entry_price', 'previous_high'])
+                                            'volume_ratio', 'entry_price', 'previous_high', 'open_price'
+                                            'amount', 'if_larger_20m'])
+
+        df = pd.read_csv('data/signals.csv', index_col=0)
+        if new[0] in df.symbol.unique():
+            return
         df = df.append(new, ignore_index=True)
         df.to_csv('data/signals.csv')
 
@@ -137,26 +154,24 @@ class LiveTrade(object):
                     good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
                 except KeyError:
                     return
+                
                 exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
+                exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 
                 if not good:
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
+                    if open_price == -1:
+                        self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     return
-
+                
                 if current_price >= self.current_to_open_ratio * open_price:
                     logging.warning(f'Current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price})')
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
                     return
 
-                exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
-
                 if not exceed_nine_days_close:
                     logging.warning(f'Previous highest price: {high_max}, volume: {volume_max} \n')
-                    d = datetime.strptime(today, '%Y-%m-%d').date()
-                    new_signal = [ticker, d, d.weekday, after_3pm, 1 if good and after_3pm else 0, 
-                                exceed_nine_days_close, 1 if exceeded else 0, volume_moving, 
-                                volume_max, volume_moving / volume_max, current_price, high_max]
-                    self.add_data(new_signal)
+                    self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     return
                 
                 response = self.create_order(symbol=ticker, 
@@ -167,11 +182,7 @@ class LiveTrade(object):
                 if exceeded:
                     logging.warning(f'{ticker} exceeded at least 20 days high')
                 
-                d = datetime.strptime(today, '%Y-%m-%d').date()
-                new_signal = [ticker, d, d.weekday, after_3pm, 1 if good and after_3pm else 0, 
-                            exceed_nine_days_close, 1 if exceeded else 0, volume_moving, 
-                            volume_max, volume_moving / volume_max, current_price, high_max]
-                self.add_data(new_signal)
+                self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
 
                 logging.warning(f'Ordered! - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} - Previous highest price: {high_max}, volume: {volume_max} \n')
                 print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')

@@ -21,7 +21,7 @@ class LiveTrade(object):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
-        self.limit_order = balance / (volatility * 3)
+        self.limit_order = balance / (volatility * 10)
         self.api = None
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
@@ -98,9 +98,9 @@ class LiveTrade(object):
         
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
             logging.warning(f'Signal after 15:00 and high current check good - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
-            return True, open_price, 3
+            return True, open_price, 10
         
-        logging.warning(f"Signal can't satisfy high current check - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}")
+        logging.warning(f"{ticker} can't satisfy high current check - price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}")
         return False, open_price, 0
 
     def if_exceed_high(self, current_price, high_list, time_list, high_max):
@@ -151,22 +151,24 @@ class LiveTrade(object):
                 
                 exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
                 exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
-                logging.warning(f'{ticker} previous highest price: {high_max}, volume: {volume_max} \n')
-
-                if exceeded:
-                    logging.warning(f'{ticker} exceeded at least 20 days high')
+                logging.warning(f'{ticker} previous highest price: {high_max}, volume: {volume_max}')
 
                 if not good:
                     return
                 
                 if current_price >= self.current_to_open_ratio * open_price:
                     logging.warning(f'Current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price})')
-                    return
-
-                if not exceed_nine_days_close:
                     self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     return
 
+                if not exceed_nine_days_close:
+                    logging.warning(f'{ticker} cannot exceed nine days close - current price: {current_price}, nine days close: {nine_days_close}')
+                    self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    return
+                
+                if exceeded:
+                    logging.warning(f'{ticker} exceeded at least 20 days high')
+                
                 if datetime.now().hour < 16:
                     response = self.create_order(symbol=ticker, 
                                             qty=self.limit_order * after_3pm * exceed_high // current_price, 
@@ -176,8 +178,8 @@ class LiveTrade(object):
                     logging.warning(f'Ordered! - {ticker}, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()} \n')
 
                 else:
-                    logging.warning(f'Signal after 16:00 - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
-                
+                    logging.warning(f'After 16:00 - {ticker}, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()} \n')
+
                 self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                 print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
@@ -202,7 +204,7 @@ class LiveTrade(object):
             date = datetime.today().strftime('%Y-%m-%d')
 
         print(f'Start @ {datetime.now()}')
-        Parallel(n_jobs=1)(delayed(self.find_signal)(ticker, data[ticker], date) for ticker in run_list)
+        Parallel(n_jobs=4)(delayed(self.find_signal)(ticker, data[ticker], date) for ticker in run_list)
 
 
 if __name__ == "__main__":

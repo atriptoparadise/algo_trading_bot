@@ -109,8 +109,8 @@ class LiveTrade(object):
         high_time = time_list[idx_high]
         days_delta = (datetime.now() - datetime.strptime(high_time, '%Y-%m-%d %H:%M:%S')).days
         if days_delta >= 20:
-            return 1.5, True
-        return 1, False
+            return True
+        return False
 
     def add_data(self, ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price):
         date = datetime.strptime(today, '%Y-%m-%d').date()
@@ -158,8 +158,29 @@ class LiveTrade(object):
                     return
                 
                 exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
-                exceed_high, exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
+                exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 logging.warning(f'{ticker} previous highest price: {high_max}, volume: {volume_max}')
+                
+                if good and current_price <= self.current_to_open_ratio * open_price \
+                    and exceed_nine_days_close and current_price > 1 and ((datetime.now().hour < 15 \
+                    and not exceeded) or datetime.now().hour >= 15):
+                    if datetime.now().hour < 16:
+                        response = self.create_order(symbol=ticker, 
+                                                qty=self.limit_order * after_3pm // current_price, 
+                                                side='buy', 
+                                                order_type='market', 
+                                                time_in_force='day')
+                        logging.warning(f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
+                        logging.warning('-' * 60)
+                        logging.warning('')
+                    
+                    else:
+                        logging.warning(f'{ticker} - after 16:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
+                        logging.warning('-' * 60)
+                        logging.warning('')
+                    
+                    self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
                 if not good:
                     logging.warning('')
@@ -184,24 +205,6 @@ class LiveTrade(object):
                     logging.warning(f'{ticker} - penny stock, current price: {current_price} \n')
                     self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     return
-
-                if datetime.now().hour < 16:
-                    response = self.create_order(symbol=ticker, 
-                                            qty=self.limit_order * after_3pm // current_price, 
-                                            side='buy', 
-                                            order_type='market', 
-                                            time_in_force='day')
-                    logging.warning(f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
-                    logging.warning('-' * 60)
-                    logging.warning('')
-
-                else:
-                    logging.warning(f'{ticker} - after 16:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
-                    logging.warning('-' * 60)
-                    logging.warning('')
-                
-                self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
-                print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
         except IndexError:
             pass

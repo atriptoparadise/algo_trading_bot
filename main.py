@@ -104,7 +104,7 @@ class LiveTrade(object):
 
     def if_exceed_high(self, current_price, high_list, time_list, high_max):
         if current_price < high_max:
-            return 1, False
+            return False
         idx_high = np.argmax(np.array(high_list))
         high_time = time_list[idx_high]
         days_delta = (datetime.now() - datetime.strptime(high_time, '%Y-%m-%d %H:%M:%S')).days
@@ -163,7 +163,7 @@ class LiveTrade(object):
                 
                 if good and current_price <= self.current_to_open_ratio * open_price \
                     and exceed_nine_days_close and current_price > 1 and ((datetime.now().hour < 15 \
-                    and not exceeded) or datetime.now().hour >= 15):
+                    and exceeded) or datetime.now().hour >= 15):
                     if datetime.now().hour < 16:
                         response = self.create_order(symbol=ticker, 
                                                 qty=self.limit_order * after_3pm // current_price, 

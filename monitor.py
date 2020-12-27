@@ -26,19 +26,6 @@ class PortfolioMonitor(object):
         self.holding_stocks = [item['symbol'] for item in content]
         return content
 
-    def run(self, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
-        positions = self.get_positions()
-        self.get_closed_orders()
-        # print(f'Portfolio monitor start @ {datetime.now()}')
-
-        for ticker in self.holding_stocks:
-            try:
-                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
-            except:
-                t.sleep(20)
-                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
-                pass
-
     def get_closed_orders(self):
         response = requests.get(ORDERED_URL, headers=HEADERS)
         content = json.loads(response.content)
@@ -75,6 +62,17 @@ class PortfolioMonitor(object):
                 print(f'Sold {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                pass
+    
+    def run(self, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
+        positions = self.get_positions()
+        self.get_closed_orders()
+
+        for ticker in self.holding_stocks:
+            try:
+                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
+            except:
+                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
                 pass
 
 

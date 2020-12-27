@@ -27,7 +27,10 @@ def update_close(day, df):
             continue
         
         ticker = df.iloc[idx, 0]
-        trade_date = datetime.strptime(df.iloc[idx, 1], '%Y/%m/%d').date()
+        try:
+            trade_date = datetime.strptime(df.iloc[idx, 1], '%Y/%m/%d').date()
+        except:
+            trade_date = datetime.strptime(df.iloc[idx, 1], '%Y-%m-%d').date()
         days_delta = (today - trade_date).days
 
         if days_delta > day - 1:

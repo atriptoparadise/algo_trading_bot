@@ -21,7 +21,7 @@ class LiveTrade(object):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.balance = balance
-        self.limit_order = balance / (volatility * 2)
+        self.limit_order = balance / volatility
         self.api = None
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
@@ -96,7 +96,7 @@ class LiveTrade(object):
 
         if datetime.now().hour < 15:
             logging.warning(f'{ticker} signal before 15:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
-            return True, open_price, 2
+            return True, open_price, 1
         
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
             logging.warning(f'{ticker} signal after 15:00 and high current check good, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
@@ -169,7 +169,7 @@ class LiveTrade(object):
                     and exceeded) or datetime.now().hour >= 15):
                     if datetime.now().hour < 16:
                         response = self.create_order(symbol=ticker, 
-                                                qty=self.limit_order * after_3pm // current_price, 
+                                                qty=self.limit_order // current_price, 
                                                 side='buy', 
                                                 order_type='market', 
                                                 time_in_force='day')

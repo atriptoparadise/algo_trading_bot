@@ -48,7 +48,7 @@ class LiveTrade(object):
         return objects[0]
 
     def get_holding_stocks(self):
-        response = requests.get("{}/v2/positions".format(BASE_URL), headers=HEADERS)
+        response = requests.get("{}/v2/positions".format(API_URL), headers=HEADERS)
         content = json.loads(response.content)
         self.holding_stocks = [item['symbol'] for item in content]
 
@@ -70,8 +70,11 @@ class LiveTrade(object):
 
         nine_days = (datetime.strptime(today, '%Y-%m-%d') - BDay(9)).date()
         response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{nine_days}?apiKey={API_KEY}')
-        nine_days_close = json.loads(response.content)['close']
-
+        try:
+            nine_days_close = json.loads(response.content)['close']
+        except:
+            print(nine_days, ticker)
+            pass
         if current_price >= nine_days_close:
             logging.warning(f'{ticker} exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
             return True, nine_days_close
@@ -93,7 +96,7 @@ class LiveTrade(object):
 
         if datetime.now().hour < 15:
             logging.warning(f'{ticker} signal before 15:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
-            return True, open_price, 1
+            return True, open_price, 2
         
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
             logging.warning(f'{ticker} signal after 15:00 and high current check good, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
@@ -205,8 +208,7 @@ class LiveTrade(object):
                     logging.warning(f'{ticker} - penny stock, current price: {current_price} \n')
                     self.add_data(ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     return
-
-        except IndexError:
+        except:
             pass
 
     def create_order(self, symbol, qty, side, order_type, time_in_force):
@@ -231,7 +233,7 @@ class LiveTrade(object):
 
 
 if __name__ == "__main__":
-    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=30000, 
+    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=3000, 
                         volatility=5, high_to_current_ratio=0.2, current_to_open_ratio=1.15)
     schedule.every(1).seconds.do(trade.run)
     while True:

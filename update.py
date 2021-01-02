@@ -74,6 +74,22 @@ def update_ticker(ticker, today, last_updated_date, saved_data):
             saved_data[ticker]['date'] = date
         except:
             pass
+    
+    remove_old_data(saved_data, ticker, 90)
+
+def remove_old_data(saved_data, ticker, days):
+    today = datetime.now()
+    count = 0
+
+    for idx, time in enumerate(saved_data[ticker]['time']):
+        if (today - datetime.strptime(time, '%Y-%m-%d %H:%M:%S')).days > days:
+            count += 1
+
+    if count == 0:
+        return
+    saved_data[ticker]['volume'] = saved_data[ticker]['volume'][count:]
+    saved_data[ticker]['high'] = saved_data[ticker]['high'][count:]
+    saved_data[ticker]['time'] = saved_data[ticker]['time'][count:]
 
 def run(ticker_list=None, midnight=False):
     saved_data = load_data('data_new')
@@ -98,4 +114,4 @@ def run(ticker_list=None, midnight=False):
 
 
 if __name__ == "__main__":
-    run(ticker_list=None, midnight=True)
+    run(ticker_list=None, midnight=False)

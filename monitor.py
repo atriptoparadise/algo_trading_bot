@@ -21,7 +21,7 @@ class PortfolioMonitor(object):
                                 api_version = 'v2')
 
     def get_positions(self):
-        response = requests.get("{}/v2/positions".format(BASE_URL), headers=HEADERS)
+        response = requests.get("{}/v2/positions".format(API_URL), headers=HEADERS)
         content = json.loads(response.content)
         self.holding_stocks = [item['symbol'] for item in content]
         return content
@@ -48,18 +48,36 @@ class PortfolioMonitor(object):
         if current_price <= stop_ratio * entry_price:
             try:
                 self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print((f'Sold {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
+                logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
         
+        if current_price >= 1.2 * entry_price:
+            try:
+                self.create_order(symbol=ticker, qty=qty // 2, side='sell', order_type='market', time_in_force='gtc')
+                logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
+            except:
+                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                pass
+        
+        if current_price >= 1.1 * entry_price:
+            try:
+                self.create_order(symbol=ticker, qty=qty // 3, side='sell', order_type='market', time_in_force='gtc')
+                logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
+            except:
+                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                pass
+
         highest_price = self.get_highest_price(ticker)
         if highest_price > stop_earning_ratio_high * entry_price and (current_price - entry_price) / (highest_price - entry_price) <= stop_earning_ratio:
             try:
                 self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
-                print(f'Sold {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                print(f'Sold {qty} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
                 pass
@@ -67,8 +85,12 @@ class PortfolioMonitor(object):
     def run(self, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         positions = self.get_positions()
         self.get_closed_orders()
+        monitoring_list = [ticker for ticker in self.holding_stocks if ticker not in IGNORE_LIST]
 
-        for ticker in self.holding_stocks:
+        if not monitoring_list:
+            return
+
+        for ticker in monitoring_list:
             try:
                 self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
             except:

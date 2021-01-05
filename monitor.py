@@ -41,6 +41,18 @@ class PortfolioMonitor(object):
             idx += 1
         return stock_barset.iloc[idx:, 2].max()
 
+    def create_order(self, symbol, qty, side, order_type, time_in_force):
+        data = {
+            "symbol": symbol,
+            "qty": qty,
+            "side": side,
+            "type": order_type,
+            "time_in_force": time_in_force
+        }
+
+        r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
+        return json.loads(r.content)
+
     def portfolio_monitor(self, ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         data = next(item for item in positions if item['symbol'] == ticker)
         current_price, entry_price, qty = float(data['current_price']), float(data['avg_entry_price']), float(data['qty'])
@@ -52,6 +64,7 @@ class PortfolioMonitor(object):
                 print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
         
         if current_price >= 1.2 * entry_price:
@@ -61,6 +74,7 @@ class PortfolioMonitor(object):
                 print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
         
         if current_price >= 1.1 * entry_price:
@@ -70,6 +84,7 @@ class PortfolioMonitor(object):
                 print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
 
         highest_price = self.get_highest_price(ticker)
@@ -80,6 +95,7 @@ class PortfolioMonitor(object):
                 print(f'Sold {qty} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
     
     def run(self, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
@@ -100,6 +116,6 @@ class PortfolioMonitor(object):
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor()
-    schedule.every(30).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.07)
+    schedule.every(30).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.08)
     while True:
         schedule.run_pending()

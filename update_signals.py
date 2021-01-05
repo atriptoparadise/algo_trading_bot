@@ -55,6 +55,38 @@ def update_ratio(day, df):
     
     return df
 
+def update_high(df):
+    today = datetime.now().date()
+    
+    for idx in range(df.shape[0]):
+        if df.loc[idx, 'same_day_high'] or df.loc[idx, 'after_3_pm'] == 1:
+            continue
+        
+        ticker = df.iloc[idx, 0]
+        try:
+            trade_date = datetime.strptime(df.iloc[idx, 1], '%Y/%m/%d').date()
+        except:
+            trade_date = datetime.strptime(df.iloc[idx, 1], '%Y-%m-%d').date()
+        
+        date = trade_date.strftime('%Y-%m-%d')
+        response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{date}?apiKey={API_KEY}')
+        content = json.loads(response.content)
+        
+        if 'high' in content and content['high']:
+            df.loc[idx, 'same_day_high'] = content['high']
+            df.loc[idx, 'same_day_high_ratio'] = (content['high'] / df.loc[idx, 'entry_price'] - 1) * 100
+    
+    return df
+
+def update_current_to_open(df):
+    for idx in range(df.shape[0]):
+        if df.loc[idx, 'if_current_to_open_too_high']:
+            continue
+
+        df.loc[idx, 'if_current_to_open_too_high'] = 1 if df.loc[idx, 'entry_price'] / \
+                                            df.loc[idx, 'open_price'] > 1.15 else 0
+    return df
+
 def update_all():
     reset_idx()
     df = pd.read_csv('data/signals.csv', index_col=0)
@@ -65,7 +97,10 @@ def update_all():
         df = update_close(day, df)
         print(f'{day} day(s) completed')
 
+    df = update_high(df)
+    df = update_current_to_open(df)
     df.to_csv('data/signals.csv')
+
 
 if __name__ == "__main__":
     update_all()

@@ -127,9 +127,8 @@ class LiveTrade(object):
             high_current_check = 0
 
         new_signal = [ticker, date, ticker + date.strftime('%Y/%m/%d'), 
-                        weekday, 0 if after_3pm == 1 else 1, 
-                        high_current_check, exceed_nine_days_close, 
-                        1 if exceeded else 0, volume_moving, volume_max, 
+                        weekday, after_3pm - 1, high_current_check, exceed_nine_days_close, 
+                        1 if exceeded else 0, volume_moving, volume_max,
                         volume_moving / volume_max, current_price, high_max, 
                         open_price, (current_price / open_price - 1) * 100,
                         current_price * volume_moving, 1 if current_price * volume_moving >= 20000000 else 0]
@@ -178,6 +177,7 @@ class LiveTrade(object):
                         logging.warning('')
                     
                     else:
+                        after_3pm = 3
                         logging.warning(f'{ticker} - after 16:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
                         logging.warning('-' * 60)
                         logging.warning('')

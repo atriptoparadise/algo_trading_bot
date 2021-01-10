@@ -67,7 +67,7 @@ class PortfolioMonitor(object):
                 print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
         
-        if current_price >= 1.1 * entry_price and entry_price * qty >= 500:
+        if current_price >= 1.1 * entry_price and entry_price * qty >= 1200:
             try:
                 self.create_order(symbol=ticker, qty=qty // 3, side='sell', order_type='market', time_in_force='gtc')
                 logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
@@ -82,7 +82,7 @@ class PortfolioMonitor(object):
         if highest_price >= stop_earning_ratio_high * entry_price \
             and current_price <= entry_price * (earning_ratio - 0.1):            
             try:
-                self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
+                self.create_order(symbol=ticker, qty=qty * 7 / 15, side='sell', order_type='market', time_in_force='gtc')
                 logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
                 print(f'Sold {qty} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
@@ -108,6 +108,6 @@ class PortfolioMonitor(object):
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor()
-    schedule.every(30).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.1)
+    schedule.every(20).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.1)
     while True:
         schedule.run_pending()

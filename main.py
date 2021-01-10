@@ -17,11 +17,10 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, alpha_price, alpha_volume, balance, volatility, high_to_current_ratio, current_to_open_ratio):
+    def __init__(self, alpha_price, alpha_volume, order_amount, high_to_current_ratio, current_to_open_ratio):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
-        self.balance = balance
-        self.limit_order = balance / volatility
+        self.order_amount = order_amount
         self.api = None
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
@@ -73,7 +72,6 @@ class LiveTrade(object):
         try:
             nine_days_close = json.loads(response.content)['close']
         except:
-            print(nine_days, ticker)
             pass
         if current_price >= nine_days_close:
             logging.warning(f'{ticker} exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
@@ -168,7 +166,7 @@ class LiveTrade(object):
                     and exceeded) or datetime.now().hour >= 15):
                     if datetime.now().hour < 16:
                         response = self.create_order(symbol=ticker, 
-                                                qty=self.limit_order // current_price, 
+                                                qty=self.order_amount // current_price, 
                                                 side='buy', 
                                                 order_type='market', 
                                                 time_in_force='day')
@@ -233,8 +231,8 @@ class LiveTrade(object):
 
 
 if __name__ == "__main__":
-    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, balance=3000, 
-                        volatility=5, high_to_current_ratio=0.2, current_to_open_ratio=1.15)
+    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, order_amount=1500,
+                        high_to_current_ratio=0.2, current_to_open_ratio=1.15)
     schedule.every(1).seconds.do(trade.run)
     while True:
         schedule.run_pending()

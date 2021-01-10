@@ -59,7 +59,7 @@ def update_high(df):
     today = datetime.now().date()
     
     for idx in range(df.shape[0]):
-        if df.loc[idx, 'same_day_high'] or df.loc[idx, 'after_3_pm'] == 1:
+        if df.loc[idx, 'same_day_high'] or df.loc[idx, 'after_3_pm'] != 0:
             continue
         
         ticker = df.iloc[idx, 0]

@@ -30,7 +30,7 @@ def get_data(ticker, start_date, end_date):
     return ticker_data
 
 def init_data(ticker, data, midnight):
-    start = datetime(2020, 8, 31).date()
+    start = datetime(2020, 9, 30).date()
     today = datetime.now().date()
     if midnight:
         today = today - timedelta(days=1)

@@ -115,6 +115,7 @@ class LiveTrade(object):
 
     def add_data(self, ticker, today, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price):
         date = datetime.strptime(today, '%Y-%m-%d').date()
+        time = datetime.now().strftime("%H:%M:%S")
         weekday = int(date.weekday()) + 1
 
         if datetime.now().hour < 15:
@@ -124,14 +125,14 @@ class LiveTrade(object):
         else:
             high_current_check = 0
 
-        new_signal = [ticker, date, ticker + date.strftime('%Y/%m/%d'), 
+        new_signal = [ticker, date, time, ticker + date.strftime('%Y/%m/%d'), 
                         weekday, after_3pm - 1, high_current_check, exceed_nine_days_close, 
                         1 if exceeded else 0, volume_moving, volume_max,
                         volume_moving / volume_max, current_price, high_max, 
                         open_price, (current_price / open_price - 1) * 100,
                         current_price * volume_moving, 1 if current_price * volume_moving >= 20000000 else 0]
         
-        new = pd.Series(new_signal, index = ['symbol', 'date', 'symbol_date', 'weekday', 'after_3_pm',
+        new = pd.Series(new_signal, index = ['symbol', 'date', 'time', 'symbol_date', 'weekday', 'after_3_pm',
                                             'high_current_or_close_check', 'nine_days_close_check',
                                             'if_exceed_previous_high', 'moving_volume', 'previous_volume_max',
                                             'volume_ratio', 'entry_price', 'previous_high', 'open_price',

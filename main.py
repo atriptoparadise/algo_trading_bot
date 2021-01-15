@@ -69,14 +69,15 @@ class LiveTrade(object):
 
         nine_days = (datetime.strptime(today, '%Y-%m-%d') - BDay(9)).date()
         response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{nine_days}?apiKey={API_KEY}')
+
         try:
             nine_days_close = json.loads(response.content)['close']
+            if current_price >= nine_days_close:
+                logging.warning(f'{ticker} exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
+                return True, nine_days_close
+            return False, nine_days_close
         except:
-            pass
-        if current_price >= nine_days_close:
-            logging.warning(f'{ticker} exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
-            return True, nine_days_close
-        return False, nine_days_close
+            return False, 'NaN'
 
     def high_current_check(self, ticker, current_price, volume_moving):
         if datetime.now().weekday() >= 5 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
@@ -139,7 +140,7 @@ class LiveTrade(object):
                                             'open_ratio', 'amount', 'if_larger_20m'])
 
         df = pd.read_csv('data/signals.csv', index_col=0)
-        if new[2] in df.symbol_date.unique():
+        if new[3] in df.symbol_date.unique():
             return
         df = df.append(new, ignore_index=True)
         df.to_csv('data/signals.csv')
@@ -176,7 +177,6 @@ class LiveTrade(object):
                         logging.warning('')
                     
                     else:
-                        after_3pm = 3
                         logging.warning(f'{ticker} - after 16:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
                         logging.warning('-' * 60)
                         logging.warning('')
@@ -232,7 +232,7 @@ class LiveTrade(object):
 
 
 if __name__ == "__main__":
-    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, order_amount=1500,
+    trade = LiveTrade(alpha_price=0.9, alpha_volume=1.3, order_amount=ORDER_AMOUNT,
                         high_to_current_ratio=0.2, current_to_open_ratio=1.15)
     schedule.every(1).seconds.do(trade.run)
     while True:

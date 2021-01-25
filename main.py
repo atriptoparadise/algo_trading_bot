@@ -168,7 +168,7 @@ class LiveTrade(object):
                     and exceeded) or datetime.now().hour >= 15):
                     if datetime.now().hour < 16:
                         response = self.create_order(symbol=ticker, 
-                                                qty=self.order_amount // current_price, 
+                                                qty=(self.order_amount / after_3pm) // current_price, 
                                                 side='buy', 
                                                 order_type='market', 
                                                 time_in_force='day')

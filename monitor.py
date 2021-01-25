@@ -56,7 +56,10 @@ class PortfolioMonitor(object):
     def portfolio_monitor(self, ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         data = next(item for item in positions if item['symbol'] == ticker)
         current_price, entry_price, qty = float(data['current_price']), float(data['avg_entry_price']), float(data['qty'])
-
+        
+        if entry_price * qty < SELL_THRESHOLD:
+            return
+        
         if current_price <= stop_ratio * entry_price:
             try:
                 self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
@@ -67,7 +70,7 @@ class PortfolioMonitor(object):
                 print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
         
-        if current_price >= 1.1 * entry_price and entry_price * qty >= 1200:
+        if current_price >= 1.1 * entry_price and entry_price * qty >= ORDER_AMOUNT * 6 / 7:
             try:
                 self.create_order(symbol=ticker, qty=qty // 3, side='sell', order_type='market', time_in_force='gtc')
                 logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')

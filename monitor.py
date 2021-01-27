@@ -16,8 +16,8 @@ eastern = pytz.timezone('US/Eastern')
 class PortfolioMonitor(object):
     def __init__(self):
         self.closed_orders = []
-        self.api = tradeapi.REST(API_KEY, 
-                                SECRET_KEY, 
+        self.api = tradeapi.REST(PAPER_KEY, 
+                                PAPER_SECRET_KEY, 
                                 api_version = 'v2')
 
     def get_positions(self):
@@ -111,6 +111,6 @@ class PortfolioMonitor(object):
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor()
-    schedule.every(20).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.1)
+    schedule.every(5).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.1)
     while True:
         schedule.run_pending()

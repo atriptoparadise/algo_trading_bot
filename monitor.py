@@ -73,8 +73,8 @@ class PortfolioMonitor(object):
         if current_price >= 1.1 * entry_price and entry_price * qty >= ORDER_AMOUNT * 6 / 7:
             try:
                 self.create_order(symbol=ticker, qty=qty // 3, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
+                logging.warning(f'Sold {qty // 3} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Sold {qty // 3} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
@@ -83,11 +83,14 @@ class PortfolioMonitor(object):
         highest_price = self.get_highest_price(ticker)
         earning_ratio = highest_price / entry_price
         if highest_price >= stop_earning_ratio_high * entry_price \
-            and current_price <= entry_price * (earning_ratio - 0.1):            
+            and current_price <= entry_price * (earning_ratio - 0.1):
+
+            if entry_price * qty >= ORDER_AMOUNT * 6 / 7:
+                qty = qty * 1.5
             try:
                 self.create_order(symbol=ticker, qty=qty * 7 / 15, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
-                print(f'Sold {qty} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                logging.warning(f'Sold {qty * 7 / 15} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                print(f'Sold {qty * 7 / 15} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
                 print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
@@ -111,6 +114,6 @@ class PortfolioMonitor(object):
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor()
-    schedule.every(5).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.1)
+    schedule.every(10).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.1)
     while True:
         schedule.run_pending()

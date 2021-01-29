@@ -88,9 +88,9 @@ class PortfolioMonitor(object):
             if entry_price * qty >= ORDER_AMOUNT * 6 / 7:
                 qty = qty * 1.5
             try:
-                self.create_order(symbol=ticker, qty=qty * 7 / 15, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {qty * 7 / 15} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
-                print(f'Sold {qty * 7 / 15} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                self.create_order(symbol=ticker, qty=qty * 2 // 5, side='sell', order_type='market', time_in_force='gtc')
+                logging.warning(f'Sold {qty * 2 // 5} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                print(f'Sold {qty * 2 // 5} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
                 print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')

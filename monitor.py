@@ -53,7 +53,7 @@ class PortfolioMonitor(object):
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         return json.loads(r.content)
 
-    def portfolio_monitor(self, ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
+    def portfolio_monitor(self, ticker, positions, stop_ratio, stop_earning_ratio_high):
         data = next(item for item in positions if item['symbol'] == ticker)
         current_price, entry_price, qty = float(data['current_price']), float(data['avg_entry_price']), float(data['qty'])
         
@@ -96,7 +96,7 @@ class PortfolioMonitor(object):
                 print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
     
-    def run(self, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
+    def run(self, stop_ratio, stop_earning_ratio_high):
         positions = self.get_positions()
         self.get_closed_orders()
         monitoring_list = [ticker for ticker in self.holding_stocks if ticker not in IGNORE_LIST]
@@ -106,14 +106,14 @@ class PortfolioMonitor(object):
 
         for ticker in monitoring_list:
             try:
-                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
+                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio_high)
             except:
-                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
+                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio_high)
                 pass
 
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor()
-    schedule.every(10).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=0.5, stop_earning_ratio_high=1.1)
+    schedule.every(10).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio_high=1.1)
     while True:
         schedule.run_pending()

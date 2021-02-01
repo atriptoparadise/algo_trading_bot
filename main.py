@@ -126,7 +126,7 @@ class LiveTrade(object):
         else:
             high_current_check = 0
 
-        new_signal = [ticker, date, time, ticker + date.strftime('%Y/%m/%d') + order, order,
+        new_signal = [ticker, date, time, ticker + date.strftime('%Y/%m/%d') + str(order), order,
                         weekday, after_3pm - 1, high_current_check, exceed_nine_days_close, 
                         1 if exceeded else 0, volume_moving, volume_max,
                         volume_moving / volume_max, current_price, high_max, 

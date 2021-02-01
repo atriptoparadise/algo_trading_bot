@@ -62,9 +62,9 @@ class PortfolioMonitor(object):
         
         if current_price <= stop_ratio * entry_price:
             try:
-                self.create_order(symbol=ticker, qty=qty, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print((f'Sold {qty} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
+                self.create_order(symbol=ticker, qty=qty - 1, side='sell', order_type='market', time_in_force='gtc')
+                logging.warning(f'Sold {qty - 1} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Sold {qty - 1} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
                 logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')

@@ -83,7 +83,8 @@ class PortfolioMonitor(object):
         highest_price = self.get_highest_price(ticker)
         earning_ratio = highest_price / entry_price
         if highest_price >= stop_earning_ratio_high * entry_price \
-            and current_price <= entry_price * (earning_ratio - 0.1):
+            and current_price <= entry_price * (earning_ratio - 0.1) \
+            and entry_price * qty >= ORDER_AMOUNT / 2:
 
             if entry_price * qty >= ORDER_AMOUNT * 6 / 7:
                 qty = qty * 1.5

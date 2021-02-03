@@ -73,7 +73,6 @@ class LiveTrade(object):
         try:
             nine_days_close = json.loads(response.content)['close']
             if current_price >= nine_days_close:
-                logging.warning(f'{ticker} exceed nine days close - current price: {current_price}, nine_days_close: {nine_days_close}')
                 return True, nine_days_close
             return False, nine_days_close
         except:
@@ -83,6 +82,7 @@ class LiveTrade(object):
         if datetime.now().weekday() >= 5 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
             logging.warning(f'{ticker} signal weekend or before 9:30, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
             return False, 0, 0
+        
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         idx = 0
         while stock_barset.time[idx].date() < datetime.now().date() or stock_barset.time[idx].hour < 9:
@@ -94,15 +94,21 @@ class LiveTrade(object):
         open_price = stock_barset.iloc[idx, 1]
 
         if datetime.now().hour < 15:
-            logging.warning(f'{ticker} signal before 15:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
             return True, open_price, 1
         
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
-            logging.warning(f'{ticker} signal after 15:00 and high current check good, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
             return True, open_price, 2
         
-        logging.warning(f"{ticker} can't satisfy high current check - price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}")
         return False, open_price, 0
+
+    def high_current_check_before_3(self, ticker, date, current_price, volume_moving):
+        if datetime.now().hour == 9 and datetime.now().minute < 30:
+            return False, 0, 0 
+        
+        response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/day/{date}/{date}?sort=desc&apiKey={API_KEY}')
+        content = json.loads(response.content)['results']
+        open_price = content[0]['o']
+        return True, open_price, 1
 
     def if_exceed_high(self, current_price, high_list, time_list, high_max):
         if current_price < high_max:
@@ -159,9 +165,12 @@ class LiveTrade(object):
                 except KeyError:
                     return
                 
-                exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
+                if datetime.now().hour < 15:
+                    exceed_nine_days_close, nine_days_close = True, 0
+                else:
+                    exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
+                
                 exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
-                logging.warning(f'{ticker} previous highest price: {high_max}, volume: {volume_max}')
                 
                 if good and current_price >= open_price and current_price <= self.current_to_open_ratio * open_price \
                     and exceed_nine_days_close and current_price > 1 and ((datetime.now().hour < 15 \

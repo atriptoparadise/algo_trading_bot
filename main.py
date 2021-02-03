@@ -163,7 +163,7 @@ class LiveTrade(object):
                 exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 logging.warning(f'{ticker} previous highest price: {high_max}, volume: {volume_max}')
                 
-                if good and current_price <= self.current_to_open_ratio * open_price \
+                if good and current_price >= open_price and current_price <= self.current_to_open_ratio * open_price \
                     and exceed_nine_days_close and current_price > 1 and ((datetime.now().hour < 15 \
                     and exceeded) or datetime.now().hour >= 15):
                     if datetime.now().hour < 16:
@@ -188,6 +188,11 @@ class LiveTrade(object):
                     logging.warning('')
                     return
                 
+                if current_price < open_price:
+                    logging.warning(f'{ticker} current price ({current_price}) is lower than open price ({open_price}) \n')
+                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    return
+
                 if current_price >= self.current_to_open_ratio * open_price:
                     logging.warning(f'{ticker} current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price}) \n')
                     self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)

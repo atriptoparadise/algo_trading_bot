@@ -32,8 +32,8 @@ class PortfolioMonitor(object):
         self.closed_orders = [item for item in content if item['status'] == 'filled' or item['status'] == 'closed']
 
     def get_highest_price(self, ticker):
-        order_details = next(item for item in self.closed_orders if item['symbol'] == ticker)
-        ordered_time = eastern.localize(datetime.strptime(order_details['filled_at'], '%Y-%m-%dT%H:%M:%S.%fZ')) - timedelta(hours=4)
+        order_details = next(item for item in self.closed_orders if item['symbol'] == ticker and item['side'] == 'buy')
+        ordered_time = eastern.localize(datetime.strptime(order_details['filled_at'], '%Y-%m-%dT%H:%M:%S.%fZ')) - timedelta(hours=5)
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         
         idx = 0

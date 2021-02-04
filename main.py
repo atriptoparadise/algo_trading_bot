@@ -184,13 +184,14 @@ class LiveTrade(object):
                         logging.warning(f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
                         logging.warning('-' * 60)
                         logging.warning('')
-                    
+                        order = 1
                     else:
                         logging.warning(f'{ticker} - after 16:00, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
                         logging.warning('-' * 60)
                         logging.warning('')
+                        order = 0
                     
-                    self.add_data(ticker, today, 1, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    self.add_data(ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
 
                 if not good:

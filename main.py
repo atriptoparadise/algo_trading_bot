@@ -101,14 +101,14 @@ class LiveTrade(object):
         
         return False, open_price, 0
 
-    def high_current_check_before_3(self, ticker, date, current_price, volume_moving):
+    def get_open_price(self, ticker, date):
         if datetime.now().hour == 9 and datetime.now().minute < 30:
-            return False, 0, 0 
+            return 10000
         
         response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/day/{date}/{date}?sort=desc&apiKey={API_KEY}')
         content = json.loads(response.content)['results']
         open_price = content[0]['o']
-        return True, open_price, 1
+        return open_price
 
     def if_exceed_high(self, current_price, high_list, time_list, high_max):
         if current_price < high_max:
@@ -162,6 +162,7 @@ class LiveTrade(object):
             if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
                 try:
                     good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
+                    open_price = self.get_open_price(ticker, today)
                 except KeyError:
                     return
                 

@@ -1,4 +1,3 @@
-import alpaca_trade_api as tradeapi
 import pickle
 import pandas as pd
 import time as t
@@ -21,15 +20,11 @@ class LiveTrade(object):
         self.alpha_price = alpha_price
         self.alpha_volume = alpha_volume
         self.order_amount = order_amount
-        self.api = None
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
         self.holding_stocks = []
 
     def setup(self):
-        self.api = tradeapi.REST(API_KEY, 
-                                SECRET_KEY, 
-                                api_version = 'v2')
         self.get_holding_stocks()
         data = self.load_data('data_new')
         ticker_list = data.keys()
@@ -78,37 +73,18 @@ class LiveTrade(object):
         except:
             return False, 'NaN'
 
-    def high_current_check(self, ticker, current_price, volume_moving):
-        if datetime.now().weekday() >= 5 or datetime.now().hour < 9 or (datetime.now().hour == 9 and datetime.now().minute < 30):
-            logging.warning(f'{ticker} signal weekend or before 9:30, price: {current_price}, moving volume: {volume_moving} @ {datetime.now()}')
-            return False, 0, 0
-        
-        stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
-        idx = 0
-        while stock_barset.time[idx].date() < datetime.now().date() or stock_barset.time[idx].hour < 9:
-            idx += 1
-        while stock_barset.time[idx].minute < 30:
-            idx += 1
-        
-        high = stock_barset.iloc[idx:, 2].max()
-        open_price = stock_barset.iloc[idx, 1]
-
-        if datetime.now().hour < 15:
-            return True, open_price, 1
-        
+    def high_current_check(self, ticker, current_price, open_price, high):
         if current_price > open_price and (high - current_price) / (current_price - open_price) <= self.high_to_current_ratio:
-            return True, open_price, 2
-        
-        return False, open_price, 0
+            return True, 2
+        return False, 0
 
     def get_open_price(self, ticker, date):
         if datetime.now().hour == 9 and datetime.now().minute < 30:
-            return 10000
+            return 100000, 100000
         
         response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/day/{date}/{date}?sort=desc&apiKey={API_KEY}')
         content = json.loads(response.content)['results']
-        open_price = content[0]['o']
-        return open_price
+        return content[0]['o'], content[0]['h']
 
     def if_exceed_high(self, current_price, high_list, time_list, high_max):
         if current_price < high_max:
@@ -160,16 +136,14 @@ class LiveTrade(object):
             volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
 
             if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
-                try:
-                    good, open_price, after_3pm = self.high_current_check(ticker, current_price, volume_moving)
-                    open_price = self.get_open_price(ticker, today)
-                except KeyError:
-                    return
-                
+                open_price, high = self.get_open_price(ticker, today)
+
                 if datetime.now().hour < 15:
                     exceed_nine_days_close, nine_days_close = True, 0
+                    good, after_3pm = True, 1
                 else:
                     exceed_nine_days_close, nine_days_close = self.nine_days_close_check(ticker, current_price, today)
+                    good, after_3pm = self.high_current_check(ticker, current_price, open_price, high)
                 
                 exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 

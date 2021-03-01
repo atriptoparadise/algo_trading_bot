@@ -114,4 +114,4 @@ def run(ticker_list=None, midnight=False):
 
 
 if __name__ == "__main__":
-    run(ticker_list=None, midnight=True)
+    run(ticker_list=None, midnight=Flase)

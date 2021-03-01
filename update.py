@@ -20,7 +20,7 @@ def save_data(filename, dic_name):
 		pickle.dump(dic_name, f, pickle.HIGHEST_PROTOCOL)
 
 def get_data(ticker, start_date, end_date):
-    response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/15/minute/{start_date}/{end_date}?sort=asc&apiKey={API_KEY}')
+    response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/15/minute/{start_date}/{end_date}?sort=asc&apiKey={POLY_KEY}')
     res = json.loads(response.content)['results']
     max_volume, max_high = max([item['v'] for item in res]), max([item['h'] for item in res])
     idx_high = np.argmax([item['h'] for item in res])
@@ -114,4 +114,4 @@ def run(ticker_list=None, midnight=False):
 
 
 if __name__ == "__main__":
-    run(ticker_list=None, midnight=False)
+    run(ticker_list=None, midnight=True)

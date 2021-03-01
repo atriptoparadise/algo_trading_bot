@@ -49,7 +49,7 @@ class LiveTrade(object):
     def get_moving_volume(self, ticker, date):
         """Return 15-min moving aggregated volume and last price"""
 
-        response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/minute/{date}/{date}?sort=desc&apiKey={API_KEY}')
+        response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/minute/{date}/{date}?sort=desc&apiKey={POLY_KEY}')
         content = json.loads(response.content)['results']
         last_time = content[0]['t']
         idx = 14
@@ -63,7 +63,7 @@ class LiveTrade(object):
         """Return True if current price is higher than close price nine business days ago"""
 
         nine_days = (datetime.strptime(today, '%Y-%m-%d') - BDay(9)).date()
-        response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{nine_days}?apiKey={API_KEY}')
+        response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{nine_days}?apiKey={POLY_KEY}')
 
         try:
             nine_days_close = json.loads(response.content)['close']
@@ -82,7 +82,7 @@ class LiveTrade(object):
         if datetime.now().hour == 9 and datetime.now().minute < 30:
             return 100000, 100000
         
-        response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/day/{date}/{date}?sort=desc&apiKey={API_KEY}')
+        response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/day/{date}/{date}?sort=desc&apiKey={POLY_KEY}')
         content = json.loads(response.content)['results']
         return content[0]['o'], content[0]['h']
 

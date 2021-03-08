@@ -53,7 +53,7 @@ class PortfolioMonitor(object):
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         return json.loads(r.content)
 
-    def portfolio_monitor(self, ticker, positions, stop_ratio, stop_earning_ratio_high):
+    def portfolio_monitor(self, ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         data = next(item for item in positions if item['symbol'] == ticker)
         current_price, entry_price, qty = float(data['current_price']), float(data['avg_entry_price']), float(data['qty'])
         
@@ -63,21 +63,21 @@ class PortfolioMonitor(object):
         if current_price <= stop_ratio * entry_price:
             try:
                 self.create_order(symbol=ticker, qty=qty - 1, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {qty - 1} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print((f'Sold {qty - 1} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
+                logging.warning(f'Stop loss - Sold {qty - 1} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Stop loss - Sold {qty - 1} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
             except:
-                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                logging.warning(f'Stop loss - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print(f'Stop loss - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
         
-        if current_price >= 1.1 * entry_price and entry_price * qty >= ORDER_AMOUNT * 6 / 7:
+        if current_price >= stop_earning_ratio * entry_price and entry_price * qty >= ORDER_AMOUNT * 6 / 7:
             try:
                 self.create_order(symbol=ticker, qty=qty // 3, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {qty // 3} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print((f'Sold {qty // 3} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}'))
+                logging.warning(f'Stop earning {stop_earning_ratio * 100 - 100} % - Sold {qty // 3} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Stop earning {stop_earning_ratio * 100 - 100} % - Sold {qty // 3} shares of {ticker} at {current_price} v.s. entry price {entry_price} @ {datetime.now()}'))
             except:
-                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                logging.warning(f'Stop earning {stop_earning_ratio * 100 - 100} % - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print(f'Stop earning {stop_earning_ratio * 100 - 100} % - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
 
         highest_price = self.get_highest_price(ticker)
@@ -90,14 +90,14 @@ class PortfolioMonitor(object):
                 qty = qty * 1.5
             try:
                 self.create_order(symbol=ticker, qty=qty * 2 // 5, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Sold {qty * 2 // 5} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
-                print(f'Sold {qty * 2 // 5} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                logging.warning(f'Stop earning drawdown - Sold {qty * 2 // 5} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                print(f'Stop earning drawdown - Sold {qty * 2 // 5} shares of {ticker} at {current_price} v.s. entry price {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
             except:
-                logging.warning(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
-                print(f'Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                logging.warning(f'Stop earning drawdown - Failed to sell {ticker} at {current_price} v.s. {entry_price} v.s. highest price {highest_price} @ {datetime.now()}')
+                print(f'Stop earning drawdown - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
     
-    def run(self, stop_ratio, stop_earning_ratio_high):
+    def run(self, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         positions = self.get_positions()
         self.get_closed_orders()
         monitoring_list = [ticker for ticker in self.holding_stocks if ticker not in IGNORE_LIST]
@@ -107,14 +107,14 @@ class PortfolioMonitor(object):
 
         for ticker in monitoring_list:
             try:
-                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio_high)
+                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
             except:
-                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio_high)
+                self.portfolio_monitor(ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high)
                 pass
 
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor()
-    schedule.every(10).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio_high=1.1)
+    schedule.every(10).seconds.do(monitor.run, stop_ratio=0.92, stop_earning_ratio=1.12, stop_earning_ratio_high=1.12)
     while True:
         schedule.run_pending()

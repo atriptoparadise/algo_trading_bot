@@ -56,7 +56,7 @@ class PortfolioMonitor(object):
     def portfolio_monitor(self, ticker, positions, stop_ratio, stop_earning_ratio, stop_earning_ratio_high):
         data = next(item for item in positions if item['symbol'] == ticker)
         current_price, entry_price, qty = float(data['current_price']), float(data['avg_entry_price']), float(data['qty'])
-        
+
         if entry_price * qty < SELL_THRESHOLD:
             return
         
@@ -73,11 +73,11 @@ class PortfolioMonitor(object):
         if current_price >= stop_earning_ratio * entry_price and entry_price * qty >= ORDER_AMOUNT * 6 / 7:
             try:
                 self.create_order(symbol=ticker, qty=qty // 3, side='sell', order_type='market', time_in_force='gtc')
-                logging.warning(f'Stop earning {stop_earning_ratio * 100 - 100} % - Sold {qty // 3} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print((f'Stop earning {stop_earning_ratio * 100 - 100} % - Sold {qty // 3} shares of {ticker} at {current_price} v.s. entry price {entry_price} @ {datetime.now()}'))
+                logging.warning(f'Stop earning {round(stop_earning_ratio * 100 - 100, 0)} % - Sold {qty // 3} shares of {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print((f'Stop earning {round(stop_earning_ratio * 100 - 100, 0)} % - Sold {qty // 3} shares of {ticker} at {current_price} v.s. entry price {entry_price} @ {datetime.now()}'))
             except:
-                logging.warning(f'Stop earning {stop_earning_ratio * 100 - 100} % - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
-                print(f'Stop earning {stop_earning_ratio * 100 - 100} % - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                logging.warning(f'Stop earning {round(stop_earning_ratio * 100 - 100, 0)} % - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
+                print(f'Stop earning {round(stop_earning_ratio * 100 - 100, 0)} % - Failed to sell {ticker} at {current_price} v.s. {entry_price} @ {datetime.now()}')
                 pass
 
         highest_price = self.get_highest_price(ticker)

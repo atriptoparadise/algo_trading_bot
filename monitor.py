@@ -33,7 +33,7 @@ class PortfolioMonitor(object):
 
     def get_highest_price(self, ticker):
         order_details = next(item for item in self.closed_orders if item['symbol'] == ticker and item['side'] == 'buy')
-        ordered_time = eastern.localize(datetime.strptime(order_details['filled_at'], '%Y-%m-%dT%H:%M:%S.%fZ')) - timedelta(hours=5)
+        ordered_time = eastern.localize(datetime.strptime(order_details['filled_at'], '%Y-%m-%dT%H:%M:%S.%fZ')) - timedelta(hours=4)
         stock_barset = self.api.get_barset(ticker, '1Min', limit = 390).df.reset_index()
         
         idx = 0

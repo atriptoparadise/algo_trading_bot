@@ -25,7 +25,7 @@ def get_data(ticker, start_date, end_date):
     max_volume, max_high = max([item['v'] for item in res]), max([item['h'] for item in res])
     idx_high = np.argmax([item['h'] for item in res])
     unix_time = res[idx_high]['t'] / 1000
-    high_time = (datetime.utcfromtimestamp(unix_time) - timedelta(hours=5)).strftime('%Y-%m-%d %H:%M:%S')
+    high_time = (datetime.utcfromtimestamp(unix_time) - timedelta(hours=4)).strftime('%Y-%m-%d %H:%M:%S')
     ticker_data = {'volume': [max_volume], 'high': [max_high], 'time': [high_time]}
     return ticker_data
 

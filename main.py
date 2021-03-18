@@ -127,6 +127,25 @@ class LiveTrade(object):
         df = df.append(new, ignore_index=True)
         df.to_csv('data/signals.csv')
 
+    def get_high_so_far(self, ticker):
+        response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/minute/{date}/{date}?sort=asc&apiKey={POLY_KEY}')
+        content = json.loads(response.content)['results']
+        start = datetime.now().replace(hour=13, minute=30)
+
+        for idx, item in enumerate(content):
+            time = datetime.utcfromtimestamp(item['t'] / 1000)
+            if time >= start - timedelta(minutes=1):
+                break
+
+        return max([item['h'] for item in content[idx:]])
+
+    def open_high_check(self, ticker, open_price):
+        high = self.get_high_so_far(ticker)
+
+        if current_price <= self.current_to_open_ratio * open_price and high <= open_price * 1.25:
+            return True
+        return False
+
     def find_signal(self, ticker, ticker_data, today):
         logfile = 'logs/signal_{}.log'.format(datetime.now().date())
         logging.basicConfig(filename=logfile, level=logging.WARNING)
@@ -147,7 +166,7 @@ class LiveTrade(object):
                 
                 exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 
-                if good and current_price >= open_price and current_price <= self.current_to_open_ratio * open_price \
+                if good and current_price >= open_price and self.open_high_check(ticker, open_price) \
                     and exceed_nine_days_close and current_price > 1 and ((datetime.now().hour < 15 \
                     and exceeded) or datetime.now().hour >= 15):
                     if datetime.now().hour < 16:
@@ -178,7 +197,7 @@ class LiveTrade(object):
                     self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     return
 
-                if current_price >= self.current_to_open_ratio * open_price:
+                if not self.open_high_check(ticker, open_price):
                     logging.warning(f'{ticker} current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price}) \n')
                     self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
                     return

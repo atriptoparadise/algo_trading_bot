@@ -36,7 +36,7 @@ def update_close(day, df):
         if days_delta > day - 1:
             date = trade_date + BDay(day)
             date = date.strftime('%Y-%m-%d')
-            response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{date}?apiKey={API_KEY}')
+            response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{date}?apiKey={POLY_KEY}')
             content = json.loads(response.content)
 
             if 'close' in content and content['close']:
@@ -69,7 +69,7 @@ def update_high(df):
             trade_date = datetime.strptime(df.iloc[idx, 1], '%Y-%m-%d').date()
         
         date = trade_date.strftime('%Y-%m-%d')
-        response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{date}?apiKey={API_KEY}')
+        response = requests.get(f'{POLY_URL}/v1/open-close/{ticker}/{date}?apiKey={POLY_KEY}')
         content = json.loads(response.content)
         
         if 'high' in content and content['high']:

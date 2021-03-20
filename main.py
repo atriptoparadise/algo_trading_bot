@@ -127,7 +127,7 @@ class LiveTrade(object):
         df = df.append(new, ignore_index=True)
         df.to_csv('data/signals.csv')
 
-    def get_high_so_far(self, ticker):
+    def get_high_so_far(self, ticker, date):
         response = requests.get(f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/minute/{date}/{date}?sort=asc&apiKey={POLY_KEY}')
         content = json.loads(response.content)['results']
         start = datetime.now().replace(hour=13, minute=30)
@@ -139,8 +139,8 @@ class LiveTrade(object):
 
         return max([item['h'] for item in content[idx:]])
 
-    def open_high_check(self, ticker, open_price):
-        high = self.get_high_so_far(ticker)
+    def open_high_check(self, ticker, open_price, current_price, date):
+        high = self.get_high_so_far(ticker, date)
 
         if current_price <= self.current_to_open_ratio * open_price and high <= open_price * 1.25:
             return True
@@ -166,7 +166,7 @@ class LiveTrade(object):
                 
                 exceeded = self.if_exceed_high(current_price, ticker_data['high'], ticker_data['time'], high_max)
                 
-                if good and current_price >= open_price and self.open_high_check(ticker, open_price) \
+                if good and current_price >= open_price and self.open_high_check(ticker, open_price, current_price, today) \
                     and exceed_nine_days_close and current_price > 1 and ((datetime.now().hour < 15 \
                     and exceeded) or datetime.now().hour >= 15):
                     if datetime.now().hour < 16:

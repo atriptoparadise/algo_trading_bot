@@ -229,6 +229,7 @@ class LiveTrade(object):
         }
 
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
+        logging.warning((json.loads(r.content)))
         return json.loads(r.content)
 
     def run(self, date=None):

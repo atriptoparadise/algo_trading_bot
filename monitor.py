@@ -115,6 +115,6 @@ class PortfolioMonitor(object):
 
 if __name__ == "__main__":
     monitor = PortfolioMonitor()
-    schedule.every(10).seconds.do(monitor.run, stop_ratio=0.92, stop_earning_ratio=1.12, stop_earning_ratio_high=1.12)
+    schedule.every(10).seconds.do(monitor.run, stop_ratio=0.9, stop_earning_ratio=1.12, stop_earning_ratio_high=1.12)
     while True:
         schedule.run_pending()

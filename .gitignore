@@ -7,3 +7,4 @@ config.py
 test.py
 holding.pickle
 data/data.json
+.ipynb_checkpoints

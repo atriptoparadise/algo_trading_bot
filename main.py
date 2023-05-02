@@ -46,6 +46,14 @@ class LiveTrade(object):
         content = json.loads(response.content)
         self.holding_stocks = [item['symbol'] for item in content]
 
+    def get_bid_ask_spread_ratio(self, ticker):
+        response = requests.get(f'{POLY_URL}/v3/quotes/{ticker}/?sort=asc&apiKey={POLY_KEY}')
+        res = json.loads(response.content)['results']
+
+        ask = res[0]['ask_price']
+        bid = res[0]['bid_price']
+        return round(100 * (ask - bid) / ((ask + bid) / 2), 3)
+
     def get_moving_volume(self, ticker, date):
         """Return 15-min moving aggregated volume and last price"""
 
@@ -96,7 +104,7 @@ class LiveTrade(object):
             return True
         return False
 
-    def add_data(self, ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price):
+    def add_data(self, ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread):
         date = datetime.strptime(today, '%Y-%m-%d').date()
         time = datetime.now().strftime("%H:%M:%S")
         weekday = int(date.weekday()) + 1
@@ -113,13 +121,14 @@ class LiveTrade(object):
                         1 if exceeded else 0, volume_moving, volume_max,
                         volume_moving / volume_max, current_price, high_max, 
                         open_price, (current_price / open_price - 1) * 100,
-                        current_price * volume_moving, 1 if current_price * volume_moving >= 20000000 else 0]
+                        current_price * volume_moving, 1 if current_price * volume_moving >= 20000000 else 0,
+                        bid_ask_spread]
         
         new = pd.Series(new_signal, index = ['symbol', 'date', 'time', 'symbol_date', 'order', 'weekday', 
                                             'after_3_pm','high_current_or_close_check', 'nine_days_close_check',
                                             'if_exceed_previous_high', 'moving_volume', 'previous_volume_max',
                                             'volume_ratio', 'entry_price', 'previous_high', 'open_price',
-                                            'open_ratio', 'amount', 'if_larger_20m'])
+                                            'open_ratio', 'amount', 'if_larger_20m', 'bid_ask_spread'])
 
         df = pd.read_csv('data/signals.csv', index_col=0)
         if new[3] in df.symbol_date.unique():
@@ -154,6 +163,10 @@ class LiveTrade(object):
             volume_moving, current_price = self.get_moving_volume(ticker, today)
             volume_max, high_max = max(ticker_data['volume']), max(ticker_data['high'])
 
+            bid_ask_spread = self.get_bid_ask_spread_ratio(ticker)
+            if bid_ask_spread >= 1:
+                return
+
             if current_price >= self.alpha_price * high_max and volume_moving >= self.alpha_volume * volume_max:
                 open_price, high = self.get_open_price(ticker, today)
 
@@ -175,6 +188,7 @@ class LiveTrade(object):
                                                 side='buy', 
                                                 order_type='market', 
                                                 time_in_force='day')
+                        print(f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
                         logging.warning(f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
                         logging.warning('-' * 60)
                         logging.warning('')
@@ -185,37 +199,45 @@ class LiveTrade(object):
                         logging.warning('')
                         order = 0
                     
-                    self.add_data(ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
-                    print(f'{ticker}, volume: {volume_max} - {volume_moving}, price: {high_max} - {current_price}')
+                    self.add_data(ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread)
 
                 if not good:
                     logging.warning('')
                     return
                 
                 if current_price < open_price:
+                    print(f'{ticker} current price ({current_price}) is lower than open price ({open_price})')
                     logging.warning(f'{ticker} current price ({current_price}) is lower than open price ({open_price}) \n')
-                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread)
                     return
 
                 if not self.open_high_check(ticker, open_price):
+                    print(f'{ticker} current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price})')
                     logging.warning(f'{ticker} current price ({current_price}) is higher than {self.current_to_open_ratio} * open price ({open_price}) \n')
-                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread)
                     return
 
                 if not exceed_nine_days_close:
+                    print(f'{ticker} cannot exceed nine days close - current price: {current_price}, nine days close: {nine_days_close}')
                     logging.warning(f'{ticker} cannot exceed nine days close - current price: {current_price}, nine days close: {nine_days_close} \n')
-                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread)
                     return
                 
                 if datetime.now().hour < 15 and not exceeded:
+                    print(f'{ticker} before 15:00 but cannot exceed previous 20 days high - current price: {current_price}, previous high: {high_max}')
                     logging.warning(f'{ticker} before 15:00 but cannot exceed previous 20 days high - current price: {current_price}, previous high: {high_max} \n')
-                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread)
                     return
 
                 if current_price <= 1:
+                    print((f'{ticker} - penny stock, current price: {current_price}'))
                     logging.warning(f'{ticker} - penny stock, current price: {current_price} \n')
-                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price)
+                    self.add_data(ticker, today, 0, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread)
                     return
+            # elif volume_moving >= self.alpha_volume * volume_max:
+            #     print(f"({ticker} - New high vol: {volume_moving / 1000:,.2f}K * Price: ${current_price} = ${volume_moving * current_price / 1000:,.0f}K, bid ask spread%: {bid_ask_spread}%)")
+            #     logging.warning(f"({ticker} - New high vol: {volume_moving / 1000:,.2f}K * Price: ${current_price} = ${volume_moving * current_price / 1000:,.0f}K, bid ask spread%: {bid_ask_spread}%)")
+            #     self.add_data(ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, volume_max, current_price, high_max, open_price, bid_ask_spread)
         except:
             pass
 
@@ -237,7 +259,7 @@ class LiveTrade(object):
         if not date:
             date = datetime.today().strftime('%Y-%m-%d')
 
-        print(f'Start @ {datetime.now()}')
+        print(f'\nStart @ {datetime.now()}')
         Parallel(n_jobs=4)(delayed(self.find_signal)(ticker, data[ticker], date) for ticker in run_list)
 
 

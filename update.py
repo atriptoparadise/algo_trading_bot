@@ -132,22 +132,6 @@ def run(ticker_list=None, start_date=None, end_date=None):
     start_date is required when initial the data.
     """
 
-    ## Initial data
-    # saved_data = {}
-    # for ticker in ticker_list:
-    #     init_data(ticker=ticker, data=saved_data, 
-    #             start_date=start_date, end_date=end_date)
-    
-    # save_data('data', saved_data)
-
-    ## BackTest
-    # saved_data = load_data('data')
-    # for ticker in ticker_list:
-    #     init_data(ticker=ticker, data=saved_data, 
-    #                 start_date=start_date, end_date=end_date)
-    # save_data('data', saved_data)
-
-
     saved_data = load_data('data')
     saved_list = saved_data.keys()
     

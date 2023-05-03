@@ -12,12 +12,12 @@ AAN,The Aaron's Company,Rental & Leasing Services,307482630
 AAOI,Applied Optoelectronics,Semiconductors,64206909
 AAON,"AAON, Inc.",Building Products & Equipment,5171116566
 AAP,Advance Auto Parts,Specialty Retail,7208286818
-AAPL,Apple,Consumer Electronics,2.60903E+12
+AAPL,Apple,Consumer Electronics,2.61E+12
 AAT,American Assets Trust,REIT - Diversified,1467050225
 AAU,Almaden Minerals,Gold,26071988
 AB,AllianceBernstein Holding L.P.,Asset Management,4160564560
 ABB,ABB Ltd,Electrical Equipment & Parts,63720825549
-ABBV,AbbVie,Drug Manufacturers - General,2.81151E+11
+ABBV,AbbVie,Drug Manufacturers - General,2.81E+11
 ABC,AmerisourceBergen,Medical Distribution,32383528380
 ABCB,Ameris Bancorp,Banks - Regional,2538103300
 ABCL,AbCellera Biologics,Biotechnology,2169152561
@@ -32,7 +32,7 @@ ABOS,Acumen Pharmaceuticals,Biotechnology,166561906
 ABR,Arbor Realty Trust,REIT - Mortgage,2066120402
 ABSI,Absci,Biotechnology,161691068
 ABST,Absolute Software,Software - Application,412462476
-ABT,Abbott Laboratories,Medical Devices,1.75985E+11
+ABT,Abbott Laboratories,Medical Devices,1.76E+11
 ABUS,Arbutus Biopharma,Biotechnology,492590154
 ABVC,ABVC BioPharma,Biotechnology,20884672
 AC,Associated Capital Group,Capital Markets,811325930
@@ -64,7 +64,7 @@ ACLS,Axcelis Technologies,Semiconductor Equipment & Materials,4359153825
 ACLX,Arcellx,Biotechnology,1458305082
 ACM,AECOM,Engineering & Construction,11716264000
 ACMR,ACM Research,Semiconductor Equipment & Materials,698526293
-ACN,Accenture,Information Technology Services,1.89377E+11
+ACN,Accenture,Information Technology Services,1.89E+11
 ACNB,ACNB Corporation,Banks - Regional,277162274
 ACNT,Ascent Industries Co.,Steel,93351045
 ACON,Aclarion,Health Information Services,5109988
@@ -84,7 +84,7 @@ ACXP,Acurx Pharmaceuticals,Biotechnology,40259868
 ADAG,Adagene,Biotechnology,62716270
 ADAL,Anthemis Digital Acquisitions I,Shell Companies,315459344
 ADAP,Adaptimmune Therapeutics,Biotechnology,180182441
-ADBE,Adobe,Software - Infrastructure,1.76721E+11
+ADBE,Adobe,Software - Infrastructure,1.77E+11
 ADC,Agree Realty,REIT - Retail,6186796974
 ADCT,ADC Therapeutics,Biotechnology,157252867
 ADD,Color Star Technology Co.,Entertainment,17512551
@@ -275,7 +275,7 @@ AM,Antero Midstream,Oil & Gas Midstream,5020650286
 AMAL,Amalgamated Financial,Banks - Regional,543721609
 AMAM,Ambrx Biopharma,Biotechnology,492493689
 AMAO,American Acquisition Opportunity,Shell Companies,35245181
-AMAT,Applied Materials,Semiconductor Equipment & Materials,1.03806E+11
+AMAT,Applied Materials,Semiconductor Equipment & Materials,1.04E+11
 AMBA,Ambarella,Semiconductor Equipment & Materials,3000559198
 AMBC,Ambac Financial Group,Insurance - Specialty,701044308
 AMBI,Ambipar Emergency Response,Waste Management,456023461
@@ -284,12 +284,12 @@ AMBP,Ardagh Metal Packaging,Packaging & Containers,2438105902
 AMC,AMC Entertainment Holdings,Entertainment,2571783220
 AMCR,Amcor,Packaging & Containers,16908176036
 AMCX,AMC Networks,Entertainment,756096392
-AMD,Advanced Micro Devices,Semiconductors,1.57932E+11
+AMD,Advanced Micro Devices,Semiconductors,1.58E+11
 AME,AMETEK,Specialty Industrial Machinery,33466736567
 AMED,Amedisys,Medical Care Facilities,2394096630
 AMEH,Apollo Medical Holdings,Medical Care Facilities,1719049920
 AMG,Affiliated Managers Group,Asset Management,5107152716
-AMGN,Amgen,Drug Manufacturers - General,1.29089E+11
+AMGN,Amgen,Drug Manufacturers - General,1.29E+11
 AMH,American Homes 4 Rent,REIT - Residential,12993630243
 AMK,AssetMark Financial Holdings,Asset Management,2324148710
 AMKR,Amkor Technology,Semiconductors,6382289680
@@ -327,7 +327,7 @@ AMWD,American Woodmark,"Furnishings, Fixtures & Appliances",866200071
 AMWL,American Well,Health Information Services,655119468
 AMX,"América Móvil,",Telecom Services,66560097306
 AMYT,Amryt Pharma,Drug Manufacturers - Specialty & Generic,935072262
-AMZN,Amazon.com,Internet Retail,1.05844E+12
+AMZN,Amazon.com,Internet Retail,1.06E+12
 AN,AutoNation,Auto & Truck Dealerships,6301376512
 ANAB,AnaptysBio,Biotechnology,607778560
 ANDE,The Andersons,Food Distribution,1395578868
@@ -467,7 +467,7 @@ ASLE,AerSale,Airports & Air Services,881917134
 ASLN,ASLAN Pharmaceuticals,Biotechnology,47079936
 ASM,Avino Silver & Gold Mines,Other Precious Metals & Mining,104738865
 ASMB,Assembly Biosciences,Biotechnology,43656175
-ASML,ASML Holding,Semiconductor Equipment & Materials,2.68601E+11
+ASML,ASML Holding,Semiconductor Equipment & Materials,2.69E+11
 ASND,Ascendis Pharma,Biotechnology,6127869606
 ASNS,Actelis Networks,Communication Equipment,5548559
 ASO,Academy Sports and Outdoors,Specialty Retail,5021287650
@@ -560,7 +560,7 @@ AVB,AvalonBay Communities,REIT - Residential,23514955200
 AVD,American Vanguard,Agricultural Inputs,644937068
 AVDL,Avadel Pharmaceuticals,Drug Manufacturers - Specialty & Generic,565892892
 AVDX,AvidXchange Holdings,Software - Infrastructure,1555842662
-AVGO,Broadcom,Semiconductors,2.67473E+11
+AVGO,Broadcom,Semiconductors,2.67E+11
 AVGR,Avinger,Medical Instruments & Supplies,7063028
 AVHI,Achari Ventures Holdings I,Shell Companies,131843750
 AVID,Avid Technology,Electronic Gaming & Multimedia,1400001252
@@ -593,7 +593,7 @@ AXL,American Axle & Manufacturing Holdings,Auto Parts,912325150
 AXLA,Axcella Health,Biotechnology,35306304
 AXNX,Axonics,Medical Devices,2726014016
 AXON,Axon Enterprise,Aerospace & Defense,16383065670
-AXP,American Express Company,Credit Services,1.22734E+11
+AXP,American Express Company,Credit Services,1.23E+11
 AXR,AMREP,Real Estate - Development,73516191
 AXS,AXIS Capital Holdings,Insurance - Property & Casualty,4644161022
 AXSM,Axsome Therapeutics,Biotechnology,2684097720
@@ -606,7 +606,7 @@ AYTU,Aytu BioPharma,Drug Manufacturers - Specialty & Generic,8003745
 AYX,Alteryx,Software - Application,4170820150
 AZ,A2Z Smart Technologies,Aerospace & Defense,42471312
 AZEK,The AZEK Company,Building Products & Equipment,3548137120
-AZN,AstraZeneca,Drug Manufacturers - General,2.15148E+11
+AZN,AstraZeneca,Drug Manufacturers - General,2.15E+11
 AZO,AutoZone,Specialty Retail,45224306255
 AZPN,Aspen Technology,Software - Application,14824207431
 AZRE,Azure Power Global,Utilities - Renewable,159762135
@@ -615,9 +615,9 @@ AZUL,Azul S.A.,Airlines,828592050
 AZYO,Aziyo Biologics,Medical Devices,24447202
 AZZ,AZZ Inc.,Metal Fabrication,1026649180
 B,Barnes Group,Specialty Industrial Machinery,2038280784
-BA,The Boeing Company,Aerospace & Defense,1.27283E+11
-BABA,Alibaba Group Holding,Internet Retail,2.64391E+11
-BAC,Bank of America,Banks - Diversified,2.28779E+11
+BA,The Boeing Company,Aerospace & Defense,1.27E+11
+BABA,Alibaba Group Holding,Internet Retail,2.64E+11
+BAC,Bank of America,Banks - Diversified,2.29E+11
 BACA,Berenson Acquisition I,Shell Companies,342867820
 BACK,IMAC Holdings,Medical Care Facilities,4683936
 BAER,Bridger Aerospace Group Holdings,Security & Protection Services,200901088
@@ -735,7 +735,7 @@ BHG,Bright Health Group,Healthcare Plans,138861921
 BHIL,Benson Hill,Agricultural Inputs,237895900
 BHLB,Berkshire Hills Bancorp,Banks - Regional,1114405670
 BHM,Bluerock Homes Trust,,76009898
-BHP,BHP Group,Other Industrial Metals & Mining,2.25587E+11
+BHP,BHP Group,Other Industrial Metals & Mining,2.26E+11
 BHR,Braemar Hotels & Resorts,REIT - Hotel & Motel,326801110
 BHVN,Biohaven Pharmaceutical Holding Company,Biotechnology,931782695
 BIAF,bioAffinity Technologies,Diagnostics & Research,15818828
@@ -789,7 +789,7 @@ BLEU,bleuacacia ltd,Shell Companies,352589990
 BLFS,BioLife Solutions,Medical Instruments & Supplies,930160500
 BLFY,Blue Foundry Bancorp,Banks - Regional,262020864
 BLIN,Bridgeline Digital,Software - Infrastructure,9481058
-BLK,BlackRock,Asset Management,1.00526E+11
+BLK,BlackRock,Asset Management,1.01E+11
 BLKB,Blackbaud,Software - Application,3687861870
 BLMN,Bloomin' Brands,Restaurants,2247214558
 BLND,Blend Labs,Software - Application,241924189
@@ -815,7 +815,7 @@ BMRA,Biomerica,Medical Devices,31439749
 BMRC,Bank of Marin Bancorp,Banks - Regional,351472407
 BMRN,BioMarin Pharmaceutical,Biotechnology,18138079182
 BMTX,BM Technologies,Software - Application,43079168
-BMY,Bristol-Myers Squibb Company,Drug Manufacturers - General,1.4578E+11
+BMY,Bristol-Myers Squibb Company,Drug Manufacturers - General,1.46E+11
 BN,Brookfield,Asset Management,51039197957
 BNED,Barnes & Noble Education,Specialty Retail,79958536
 BNGO,Bionano Genomics,Diagnostics & Research,339925299
@@ -848,7 +848,7 @@ BOWL,Bowlero,Entertainment,2890737462
 BOX,"Box, Inc.",Software - Infrastructure,3865823576
 BOXD,Boxed,Internet Retail,14006235
 BOXL,Boxlight,Communication Equipment,28601285
-BP,BP p.l.c.,Oil & Gas Integrated,1.12597E+11
+BP,BP p.l.c.,Oil & Gas Integrated,1.13E+11
 BPAC,Bullpen Parlay Acquisition Company,Shell Companies,299287479
 BPMC,Blueprint Medicines,Biotechnology,2698657665
 BPOP,Popular,Banks - Regional,4125901463
@@ -873,8 +873,8 @@ BRFH,Barfresh Food Group,Beverages - Non-Alcoholic,17900394
 BRFS,BRF S.A.,Packaged Foods,1379993518
 BRID,Bridgford Foods,Packaged Foods,126668978
 BRIV,B. Riley Principal 250 Merger,Shell Companies,225170980
-BRK.A,Berkshire Hathaway,Insurance - Diversified,6.72927E+11
-BRK.B,Berkshire Hathaway,Insurance - Diversified,6.7754E+11
+BRK.A,Berkshire Hathaway,Insurance - Diversified,6.73E+11
+BRK.B,Berkshire Hathaway,Insurance - Diversified,6.78E+11
 BRKH,Burtech Acquisition,Shell Companies,389257750
 BRKL,Brookline Bancorp,Banks - Regional,930983592
 BRKR,Bruker,Medical Devices,11568272671
@@ -926,7 +926,7 @@ BTTR,Better Choice Company,Packaged Foods,10880035
 BTTX,Better Therapeutics,Biotechnology,16621010
 BTU,Peabody Energy,Thermal Coal,3704627200
 BTWN,Bridgetown Holdings,Shell Companies,301926572
-BUD,Anheuser-Busch InBev,Beverages - Brewers,1.32376E+11
+BUD,Anheuser-Busch InBev,Beverages - Brewers,1.32E+11
 BUR,Burford Capital,Asset Management,2422693000
 BURL,Burlington Stores,Apparel Retail,13131184770
 BURU,NUBURU,Specialty Industrial Machinery,28276194
@@ -949,7 +949,7 @@ BWMN,Bowman Consulting Group,Consulting Services,390298095
 BWMX,"Betterware de México, S.A.P.I. de C.V.",Specialty Retail,444066350
 BWV,Blue Water Vaccines,Biotechnology,17025733
 BWXT,BWX Technologies,Aerospace & Defense,5764276736
-BX,Blackstone,Asset Management,1.05628E+11
+BX,Blackstone,Asset Management,1.06E+11
 BXC,BlueLinx Holdings,Building Products & Equipment,615626534
 BXMT,Blackstone Mortgage Trust,REIT - Mortgage,3075269400
 BXP,Boston Properties,REIT - Office,8487261193
@@ -1009,7 +1009,7 @@ CASH,Pathward Financial,Banks - Regional,1143522486
 CASI,CASI Pharmaceuticals,Biotechnology,30905880
 CASS,Cass Information Systems,Specialty Business Services,593797424
 CASY,Casey's General Stores,Specialty Retail,8065840750
-CAT,Caterpillar,Farm & Heavy Construction Machinery,1.18161E+11
+CAT,Caterpillar,Farm & Heavy Construction Machinery,1.18E+11
 CATC,Cambridge Bancorp,Banks - Regional,507725429
 CATO,The Cato Corporation,Apparel Retail,180278531
 CATX,Perspective Therapeutics,Medical Devices,90641936
@@ -1230,7 +1230,7 @@ CMCA,Capitalworks Emerging Markets Acquisition,Shell Companies,297603590
 CMCL,Caledonia Mining Corporation,Gold,262706160
 CMCM,Cheetah Mobile,Internet Content & Information,74156364
 CMCO,Columbus McKinnon,Farm & Heavy Construction Machinery,1063103008
-CMCSA,Comcast,Telecom Services,1.59473E+11
+CMCSA,Comcast,Telecom Services,1.59E+11
 CMCT,Creative Media & Community Trust,REIT - Office,92543253
 CME,CME Group,Financial Data & Stock Exchanges,68897404800
 CMG,Chipotle Mexican Grill,Restaurants,47186044722
@@ -1282,7 +1282,6 @@ CNX,CNX Resources,Oil & Gas E&P,2690671012
 CNXA,Connexa Sports Technologies,Leisure,2310130
 CNXC,Concentrix,Information Technology Services,6328986950
 CNXN,PC Connection,Electronics & Computer Distribution,1183027984
-CO,Global Cord Blood,Diagnostics & Research,400084454
 COCO,The Vita Coco Company,Beverages - Non-Alcoholic,1099655874
 COCP,Cocrystal Pharma,Biotechnology,16204570
 CODA,Coda Octopus Group,Aerospace & Defense,80667864
@@ -1311,12 +1310,12 @@ COO,The Cooper Companies,Medical Instruments & Supplies,18464780152
 COOK,Traeger,"Furnishings, Fixtures & Appliances",504054510
 COOL,Corner Growth Acquisition,Shell Companies,504000000
 COOP,Mr. Cooper Group,Mortgage Finance,2837844408
-COP,ConocoPhillips,Oil & Gas E&P,1.20915E+11
+COP,ConocoPhillips,Oil & Gas E&P,1.21E+11
 CORR,CorEnergy Infrastructure Trust,REIT - Diversified,20301696
 CORS,Corsair Partnering,Shell Companies,303691335
 CORT,Corcept Therapeutics,Biotechnology,2337092340
 COSM,Cosmos Health,Drug Manufacturers - Specialty & Generic,38722998
-COST,Costco Wholesale,Discount Stores,2.20353E+11
+COST,Costco Wholesale,Discount Stores,2.20E+11
 COTY,Coty Inc.,Household & Personal Products,10282307374
 COUR,Coursera,Education & Training Services,1723968000
 COYA,Coya Therapeutics,Biotechnology,39406034
@@ -1372,7 +1371,7 @@ CRIS,Curis,Biotechnology,57584271
 CRK,Comstock Resources,Oil & Gas E&P,2994333073
 CRKN,Crown ElectroKinetics,Specialty Chemicals,3194210
 CRL,Charles River Laboratories International,Diagnostics & Research,10289893610
-CRM,Salesforce,Software - Application,1.9978E+11
+CRM,Salesforce,Software - Application,2.00E+11
 CRMD,CorMedix,Biotechnology,183438014
 CRMT,America's Car-Mart,Auto & Truck Dealerships,504570076
 CRNC,Cerence,Software - Application,1129962385
@@ -1393,7 +1392,7 @@ CRWS,Crown Crafts,"Furnishings, Fixtures & Appliances",58277376
 CS,Credit Suisse Group AG,Banks - Diversified,3506924293
 CSAN,Cosan,Oil & Gas Refining & Marketing,5515921200
 CSBR,Champions Oncology,Biotechnology,54505572
-CSCO,Cisco Systems,Communication Equipment,2.14109E+11
+CSCO,Cisco Systems,Communication Equipment,2.14E+11
 CSGP,CoStar Group,Real Estate Services,28006252200
 CSGS,CSG Systems International,Software - Infrastructure,1678855320
 CSII,Cardiovascular Systems,Medical Devices,838052280
@@ -1470,7 +1469,7 @@ CVS,CVS Health,Healthcare Plans,95422210533
 CVT,Cvent Holding,Software - Application,4088232347
 CVU,CPI Aerostructures,Aerospace & Defense,47056920
 CVV,CVD Equipment,Specialty Industrial Machinery,96566100
-CVX,Chevron,Oil & Gas Integrated,3.11092E+11
+CVX,Chevron,Oil & Gas Integrated,3.11E+11
 CW,Curtiss-Wright,Aerospace & Defense,6751938942
 CWAN,Clearwater Analytics Holdings,Software - Application,4761250753
 CWBC,Community West Bancshares,Banks - Regional,111294700
@@ -1549,7 +1548,7 @@ DDI,DoubleDown Interactive Co.,Electronic Gaming & Multimedia,395436132
 DDL,Dingdong (Cayman),Grocery Stores,835010640
 DDOG,Datadog,Software - Application,23243423636
 DDS,Dillard's,Department Stores,5249020800
-DE,Deere & Company,Farm & Heavy Construction Machinery,1.22345E+11
+DE,Deere & Company,Farm & Heavy Construction Machinery,1.22E+11
 DEA,Easterly Government Properties,REIT - Office,2431457729
 DECA,Denali Capital Acquisition,Shell Companies,113311565
 DECK,Deckers Outdoor,Footwear & Accessories,11849823315
@@ -1557,7 +1556,7 @@ DEI,Douglas Emmett,REIT - Office,2547501288
 DELL,Dell Technologies,Computer Hardware,28795505151
 DEN,Denbury,Oil & Gas E&P,4367452911
 DENN,Denny's,Restaurants,629701884
-DEO,Diageo,Beverages - Wineries & Distilleries,1.02185E+11
+DEO,Diageo,Beverages - Wineries & Distilleries,1.02E+11
 DERM,Journey Medical,Drug Manufacturers - Specialty & Generic,27939249
 DESP,Despegar.com,Travel Services,406699478
 DFFN,Diffusion Pharmaceuticals,Biotechnology,8465502
@@ -1578,7 +1577,7 @@ DHC,Diversified Healthcare Trust,REIT - Healthcare Facilities,323574739
 DHCA,DHC Acquisition,Shell Companies,124013742
 DHI,D.R. Horton,Residential Construction,33546061388
 DHIL,Diamond Hill Investment Group,Asset Management,502131934
-DHR,Danaher,Diagnostics & Research,1.83631E+11
+DHR,Danaher,Diagnostics & Research,1.84E+11
 DHT,DHT Holdings,Oil & Gas Midstream,1761889556
 DHX,DHI Group,Staffing & Employment Services,187273244
 DIBS,1stdibs.Com,Internet Retail,155894754
@@ -1586,7 +1585,7 @@ DICE,DICE Therapeutics,Biotechnology,1366923015
 DIN,Dine Brands Global,Restaurants,1055731884
 DINO,HF Sinclair,Oil & Gas Refining & Marketing,9491478680
 DIOD,Diodes,Semiconductors,4219346292
-DIS,The Walt Disney Company,Entertainment,1.82918E+11
+DIS,The Walt Disney Company,Entertainment,1.83E+11
 DISA,Disruptive Acquisition Corporation I,Shell Companies,350281270
 DISH,DISH Network,Telecom Services,4955648571
 DIST,Distoken Acquisition,Shell Companies,90373200
@@ -1792,7 +1791,7 @@ ELP,Companhia Paranaense de Energia - COPEL,Utilities - Diversified,18389615247
 ELS,Equity LifeStyle Properties,REIT - Residential,13120155653
 ELSE,Electro-Sensors,Scientific & Technical Instruments,16008853
 ELTK,Eltek,Electronic Components,24265643
-ELV,Elevance Health,Healthcare Plans,1.09186E+11
+ELV,Elevance Health,Healthcare Plans,1.09E+11
 ELVN,Enliven Therapeutics,Biotechnology,144460985
 ELYM,Eliem Therapeutics,Biotechnology,77046330
 ELYS,Elys Game Technology,Gambling,19949779
@@ -2027,7 +2026,6 @@ FGI,FGI Industries,"Furnishings, Fixtures & Appliances",18525000
 FGMC,FG Merger,Shell Companies,105641120
 FHB,First Hawaiian,Banks - Regional,2630778860
 FHI,Federated Hermes,Asset Management,3581527787
-FHLT,Future Health ESG,Shell Companies,65256246
 FHN,First Horizon,Banks - Regional,9554190249
 FHTX,Foghorn Therapeutics,Biotechnology,259185420
 FIAC,Focus Impact Acquisition,Shell Companies,298711899
@@ -2075,7 +2073,7 @@ FMC,FMC Corporation,Agricultural Inputs,15283592460
 FMIV,Forum Merger IV,Shell Companies,436489575
 FMNB,Farmers National Banc,Banks - Regional,479188720
 FMS,Fresenius Medical Care AG & Co. KGaA,Medical Care Facilities,12475942190
-FMX,"Fomento Económico Mexicano,",Beverages - Brewers,1.52511E+11
+FMX,"Fomento Económico Mexicano,",Beverages - Brewers,1.53E+11
 FN,Fabrinet,Electronic Components,4347637336
 FNA,Paragon 28,Medical Devices,1505884674
 FNB,F.N.B.,Banks - Regional,4183308186
@@ -2098,7 +2096,6 @@ FOR,Forestar Group,Real Estate - Development,774461656
 FORA,Forian,Health Information Services,122877453
 FORD,Forward Industries,Footwear & Accessories,11218238
 FORG,ForgeRock,Software - Infrastructure,1801185823
-FORL,Four Leaf Acquisition,Shell Companies,70622500
 FORM,FormFactor,Semiconductors,2586280579
 FORR,Forrester Research,Consulting Services,620815910
 FORTY,Formula Systems (1985),Information Technology Services,1036809990
@@ -2236,7 +2233,7 @@ GDRX,GoodRx Holdings,Health Information Services,2484793881
 GDS,GDS Holdings,Information Technology Services,3555737640
 GDST,Goldenstone Acquisition,Shell Companies,78811094
 GDYN,Grid Dynamics Holdings,Information Technology Services,857584988
-GE,General Electric Company,Specialty Industrial Machinery,1.04231E+11
+GE,General Electric Company,Specialty Industrial Machinery,1.04E+11
 GECC,Great Elm Capital,Asset Management,68417640
 GEEX,Games & Esports Experience Acquisition,Shell Companies,262750000
 GEF,Greif,Packaging & Containers,3289752285
@@ -2288,7 +2285,7 @@ GIFI,Gulf Island Fabrication,Metal Fabrication,58915840
 GIGM,GigaMedia,Electronic Gaming & Multimedia,15694124
 GIII,G-III Apparel Group,Apparel Manufacturing,738453950
 GIL,Gildan Activewear,Apparel Manufacturing,5964973180
-GILD,Gilead Sciences,Drug Manufacturers - General,1.03615E+11
+GILD,Gilead Sciences,Drug Manufacturers - General,1.04E+11
 GILT,Gilat Satellite Networks,Communication Equipment,289866240
 GIPR,Generation Income Properties,REIT - Diversified,11259170
 GIS,General Mills,Packaged Foods,50195271473
@@ -2355,8 +2352,8 @@ GOL,Gol Linhas Aéreas Inteligentes,Airlines,4207316284
 GOLD,Barrick Gold,Gold,32596849797
 GOLF,Acushnet Holdings,Leisure,3410219052
 GOOD,Gladstone Commercial,REIT - Diversified,532172628
-GOOG,Alphabet,Internet Content & Information,1.33544E+12
-GOOGL,Alphabet,Internet Content & Information,1.33633E+12
+GOOG,Alphabet,Internet Content & Information,1.34E+12
+GOOGL,Alphabet,Internet Content & Information,1.34E+12
 GOOS,Canada Goose Holdings,Apparel Manufacturing,2010470058
 GORO,Gold Resource,Gold,92818001
 GOSS,Gossamer Bio,Biotechnology,119680596
@@ -2402,7 +2399,7 @@ GRTS,Gritstone bio,Biotechnology,243700360
 GRTX,Galera Therapeutics,Biotechnology,109645056
 GRVY,Gravity Co.,Electronic Gaming & Multimedia,401646420
 GRWG,GrowGeneration,Specialty Retail,215702126
-GS,The Goldman Sachs Group,Capital Markets,1.09188E+11
+GS,The Goldman Sachs Group,Capital Markets,1.09E+11
 GSAT,Globalstar,Telecom Services,2329558399
 GSBC,Great Southern Bancorp,Banks - Regional,617251992
 GSBD,Goldman Sachs BDC,Asset Management,1494169950
@@ -2479,8 +2476,8 @@ HCSG,Healthcare Services Group,Medical Care Facilities,1031794848
 HCTI,Healthcare Triangle,Health Information Services,16716131
 HCVI,Hennessy Capital Investment Corp. VI,Shell Companies,459345940
 HCWB,HCW Biologics,Biotechnology,55152160
-HD,The Home Depot,Home Improvement Retail,2.99535E+11
-HDB,HDFC Bank,Banks - Regional,1.23966E+11
+HD,The Home Depot,Home Improvement Retail,3.00E+11
+HDB,HDFC Bank,Banks - Regional,1.24E+11
 HDSN,Hudson Technologies,Specialty Chemicals,395721297
 HE,Hawaiian Electric Industries,Utilities - Diversified,4207564800
 HEAR,Turtle Beach,Consumer Electronics,166023384
@@ -2558,7 +2555,7 @@ HOLI,Hollysys Automation Technologies,Electrical Equipment & Parts,1073979959
 HOLO,MicroCloud Hologram,Electronic Components,112802640
 HOLX,Hologic,Medical Instruments & Supplies,19896907800
 HOMB,"Home Bancshares, Inc. (Conway, AR)",Banks - Regional,4420308144
-HON,Honeywell International,Conglomerates,1.27695E+11
+HON,Honeywell International,Conglomerates,1.28E+11
 HONE,HarborOne Bancorp,Banks - Regional,588957440
 HOOD,Robinhood Markets,Software - Infrastructure,8114404328
 HOOK,HOOKIPA Pharma,Biotechnology,40504582
@@ -2588,7 +2585,7 @@ HRTG,Heritage Insurance Holdings,Insurance - Property & Casualty,82534452
 HRTX,Heron Therapeutics,Biotechnology,179520880
 HRZN,Horizon Technology Finance,Asset Management,319454112
 HSAI,Hesai Group,Auto Parts,1787320154
-HSBC,HSBC Holdings,Banks - Diversified,1.36324E+11
+HSBC,HSBC Holdings,Banks - Diversified,1.36E+11
 HSC,Harsco,Waste Management,543000736
 HSCS,Heart Test Laboratories,Medical Devices,9613311
 HSDT,Helius Medical Technologies,Medical Devices,7188265
@@ -2659,7 +2656,7 @@ IBCP,Independent Bank,Banks - Regional,375485431
 IBEX,IBEX Limited,Information Technology Services,445251200
 IBIO,"iBio, Inc.",Biotechnology,25727936
 IBKR,Interactive Brokers Group,Capital Markets,34411008991
-IBM,International Business Machines,Information Technology Services,1.17499E+11
+IBM,International Business Machines,Information Technology Services,1.17E+11
 IBN,ICICI Bank,Banks - Regional,75335565926
 IBOC,International Bancshares,Banks - Regional,2661031772
 IBP,Installed Building Products,Building Products & Equipment,3227778792
@@ -2788,12 +2785,12 @@ INST,Instructure Holdings,Software - Application,3701550093
 INSW,International Seaways,Oil & Gas Midstream,2047379952
 INT,World Fuel Services,Oil & Gas Refining & Marketing,1585180765
 INTA,Intapp,Software - Application,2858630712
-INTC,Intel,Semiconductors,1.45446E+11
+INTC,Intel,Semiconductors,1.45E+11
 INTE,Integral Acquisition Corporation 1,Shell Companies,147487470
 INTG,The InterGroup Corporation,Lodging,104549400
 INTR,Inter & Co,Banks - Regional,687155292
 INTT,inTEST,Semiconductor Equipment & Materials,230657836
-INTU,Intuit,Software - Application,1.2924E+11
+INTU,Intuit,Software - Application,1.29E+11
 INTZ,Intrusion,Software - Infrastructure,24789960
 INUV,Inuvo,Advertising Agencies,38574702
 INVA,Innoviva,Biotechnology,766418580
@@ -2924,14 +2921,14 @@ JLL,Jones Lang LaSalle,Real Estate Services,6925600431
 JMIA,Jumia Technologies AG,Internet Retail,328595672
 JMSB,John Marshall Bancorp,Banks - Regional,305015760
 JNCE,Jounce Therapeutics,Biotechnology,96845280
-JNJ,Johnson & Johnson,Drug Manufacturers - General,4.83575E+11
+JNJ,Johnson & Johnson,Drug Manufacturers - General,4.84E+11
 JNPR,Juniper Networks,Communication Equipment,11150703200
 JOAN,JOANN,Specialty Retail,64851330
 JOB,GEE Group,Staffing & Employment Services,50064353
 JOBY,Joby Aviation,Airports & Air Services,2892748776
 JOE,The St. Joe Company,Real Estate - Diversified,2427340155
 JOUT,Johnson Outdoors,Leisure,650162321
-JPM,JPMorgan Chase & Co.,Banks - Diversified,3.83549E+11
+JPM,JPMorgan Chase & Co.,Banks - Diversified,3.84E+11
 JRSH,Jerash Holdings (US),Apparel Manufacturing,58422744
 JRVR,James River Group Holdings,Insurance - Specialty,774703335
 JSPR,Jasper Therapeutics,Biotechnology,197983230
@@ -3016,7 +3013,7 @@ KNTE,Kinnate Biopharma,Biotechnology,291060000
 KNTK,Kinetik Holdings,Oil & Gas Midstream,1532288370
 KNW,Know Labs,Scientific & Technical Instruments,42914673
 KNX,Knight-Swift Transportation Holdings,Trucking,9105872040
-KO,The Coca-Cola Company,Beverages - Non-Alcoholic,2.68361E+11
+KO,The Coca-Cola Company,Beverages - Non-Alcoholic,2.68E+11
 KOD,Kodiak Sciences,Biotechnology,399978752
 KODK,Eastman Kodak Company,Specialty Business Services,335432082
 KOF,"Coca-Cola FEMSA,",Beverages - Non-Alcoholic,16905379654
@@ -3162,7 +3159,7 @@ LII,Lennox International,Building Products & Equipment,8913931848
 LILA,Liberty Latin America,Telecom Services,1788278760
 LILAK,Liberty Latin America,Telecom Services,1782028870
 LILM,Lilium,Aerospace & Defense,257985000
-LIN,Linde,Specialty Chemicals,1.74934E+11
+LIN,Linde,Specialty Chemicals,1.75E+11
 LINC,Lincoln Educational Services,Education & Training Services,178360184
 LIND,Lindblad Expeditions Holdings,Travel Services,508469632
 LINK,Interlink Electronics,Electronic Components,60089884
@@ -3182,7 +3179,7 @@ LKFN,Lakeland Financial,Banks - Regional,1622050272
 LKQ,LKQ Corporation,Auto Parts,15171380400
 LL,LL Flooring Holdings,Home Improvement Retail,111178500
 LLAP,Terran Orbital,Aerospace & Defense,265462305
-LLY,Eli Lilly and Company,Drug Manufacturers - General,3.27055E+11
+LLY,Eli Lilly and Company,Drug Manufacturers - General,3.27E+11
 LMAT,LeMaitre Vascular,Medical Instruments & Supplies,1137348031
 LMB,Limbach Holdings,Engineering & Construction,180779810
 LMDX,LumiraDx,Diagnostics & Research,191042460
@@ -3191,7 +3188,7 @@ LMND,Lemonade,Insurance - Property & Casualty,1053053956
 LMNL,Liminal BioSciences,Biotechnology,11796036
 LMNR,Limoneira Company,Farm Products,297057796
 LMST,Limestone Bancorp,Banks - Regional,170211914
-LMT,Lockheed Martin,Aerospace & Defense,1.20319E+11
+LMT,Lockheed Martin,Aerospace & Defense,1.20E+11
 LNC,Lincoln National,Insurance - Life,3802395690
 LND,BrasilAgro - Companhia Brasileira de Propriedades Agrícolas,Farm Products,475255898
 LNG,Cheniere Energy,Oil & Gas Midstream,38407750400
@@ -3214,7 +3211,7 @@ LOOP,Loop Industries,Specialty Chemicals,163294048
 LOPE,Grand Canyon Education,Education & Training Services,3535387660
 LOV,Spark Networks SE,Internet Content & Information,17567989
 LOVE,The Lovesac Company,"Furnishings, Fixtures & Appliances",439060360
-LOW,Lowe's Companies,Home Improvement Retail,1.19253E+11
+LOW,Lowe's Companies,Home Improvement Retail,1.19E+11
 LPCN,Lipocine,Biotechnology,28155285
 LPG,Dorian LPG,Oil & Gas Midstream,804588970
 LPL,LG Display Co.,Consumer Electronics,4565725627
@@ -3290,7 +3287,7 @@ LYV,Live Nation Entertainment,Entertainment,16211370560
 LZ,LegalZoom.com,Specialty Business Services,1789957335
 LZB,La-Z-Boy,"Furnishings, Fixtures & Appliances",1254522832
 M,Macy's,Department Stores,4746698690
-MA,Mastercard,Credit Services,3.43685E+11
+MA,Mastercard,Credit Services,3.44E+11
 MAA,Mid-America Apartment Communities,REIT - Residential,18491070943
 MAC,The Macerich Company,REIT - Retail,2417043726
 MACA,Moringa Acquisition,Shell Companies,152709400
@@ -3341,7 +3338,7 @@ MCAG,Mountain Crest Acquisition V,Shell Companies,92515475
 MCB,Metropolitan Bank Holding,Banks - Regional,371471679
 MCBC,Macatawa Bank,Banks - Regional,350518406
 MCBS,MetroCity Bankshares,Banks - Regional,429705833
-MCD,McDonald's,Restaurants,2.04534E+11
+MCD,McDonald's,Restaurants,2.05E+11
 MCFT,MasterCraft Boat Holdings,Recreational Vehicles,540932809
 MCHP,Microchip Technology,Semiconductors,47668559280
 MCHX,Marchex,Advertising Agencies,77729468
@@ -3366,7 +3363,7 @@ MDLZ,Mondelez International,Confectioners,95049969853
 MDNA,Medicenna Therapeutics,Biotechnology,43843773
 MDRR,Medalist Diversified REIT,REIT - Diversified,14828264
 MDRX,Allscripts Healthcare Solutions,Health Information Services,1425843000
-MDT,Medtronic,Medical Devices,1.07258E+11
+MDT,Medtronic,Medical Devices,1.07E+11
 MDU,MDU Resources Group,Conglomerates,6206459520
 MDV,Modiv,REIT - Diversified,80214724
 MDVL,MedAvail Holdings,Pharmaceutical Retailers,22976635
@@ -3391,7 +3388,7 @@ MERC,Mercer International,Paper & Paper Products,646784380
 MESA,Mesa Air Group,Airlines,98947972
 MESO,Mesoblast,Biotechnology,484669640
 MET,MetLife,Insurance - Life,44866533353
-META,Meta Platforms,Internet Content & Information,5.6227E+11
+META,Meta Platforms,Internet Content & Information,5.62E+11
 METC,Ramaco Resources,Coking Coal,391620358
 METX,Meten Holding Group,Education & Training Services,5280708
 MF,Missfresh,Grocery Stores,9978098
@@ -3535,7 +3532,7 @@ MRCY,Mercury Systems,Aerospace & Defense,2970475848
 MRDB,MariaDB,Software - Infrastructure,91746816
 MREO,Mereo BioPharma Group,Biotechnology,88362500
 MRIN,Marin Software,Software - Application,15692468
-MRK,Merck & Co.,Drug Manufacturers - General,2.70081E+11
+MRK,Merck & Co.,Drug Manufacturers - General,2.70E+11
 MRKR,Marker Therapeutics,Biotechnology,6247169
 MRM,MEDIROM Healthcare Technologies,Personal Services,30027375
 MRNA,Moderna,Biotechnology,59232429697
@@ -3547,7 +3544,7 @@ MRTX,Mirati Therapeutics,Biotechnology,2226940679
 MRUS,Merus,Biotechnology,852238320
 MRVI,Maravai LifeSciences Holdings,Biotechnology,3563247360
 MRVL,Marvell Technology,Semiconductors,39167619208
-MS,Morgan Stanley,Capital Markets,1.47674E+11
+MS,Morgan Stanley,Capital Markets,1.48E+11
 MSA,MSA Safety,Security & Protection Services,5234962200
 MSAC,Medicus Sciences Acquisition,Shell Companies,118124552
 MSB,Mesabi Trust,Steel,330361600
@@ -3555,7 +3552,7 @@ MSBI,Midland States Bancorp,Banks - Regional,481866462
 MSC,Studio City International Holdings,Resorts & Casinos,1402652126
 MSCI,MSCI Inc.,Financial Data & Stock Exchanges,44810460470
 MSEX,Middlesex Water Company,Utilities - Regulated Water,1378200852
-MSFT,Microsoft,Software - Infrastructure,2.14605E+12
+MSFT,Microsoft,Software - Infrastructure,2.15E+12
 MSGE,Madison Square Garden Entertainment,Entertainment,2056238396
 MSGM,Motorsport Games,Electronic Gaming & Multimedia,16930932
 MSGS,Madison Square Garden Sports,Entertainment,4656291090
@@ -3620,7 +3617,6 @@ MYPS,PLAYSTUDIOS,Electronic Gaming & Multimedia,504574249
 MYRG,MYR Group,Engineering & Construction,2100082660
 MYSZ,My Size,Software - Application,3072720
 MYTE,MYT Netherlands Parent B.V.,Luxury Goods,596714836
-NA,Nano Labs,Semiconductors,57978232
 NAAS,NaaS Technology,Specialty Retail,2660934301
 NABL,N-able,Information Technology Services,2640171481
 NAII,Natural Alternatives International,Packaged Foods,55746339
@@ -3664,7 +3660,7 @@ NDRA,ENDRA Life Sciences,Diagnostics & Research,7256922
 NDSN,Nordson,Specialty Industrial Machinery,12726829860
 NE,Noble,Oil & Gas Drilling,5321384554
 NECB,Northeast Community Bancorp,Banks - Regional,210569440
-NEE,NextEra Energy,Utilities - Regulated Electric,1.53197E+11
+NEE,NextEra Energy,Utilities - Regulated Electric,1.53E+11
 NEGG,Newegg Commerce,Internet Retail,502856419
 NEM,Newmont,Gold,38946783729
 NEN,New England Realty AssociatesLP,Real Estate Services,261167720
@@ -3692,7 +3688,7 @@ NFBK,"Northfield Bancorp, Inc. (Staten Island, NY)",Banks - Regional,551854126
 NFE,New Fortress Energy,Utilities - Regulated Gas,6144101100
 NFG,National Fuel Gas Company,Oil & Gas Integrated,5300249305
 NFGC,New Found Gold,Gold,876360000
-NFLX,Netflix,Entertainment,1.53858E+11
+NFLX,Netflix,Entertainment,1.54E+11
 NFNT,Infinite Acquisition,Shell Companies,359489990
 NFTG,The NFT Gaming Company,Electronic Gaming & Multimedia,15857025
 NFYS,Enphys Acquisition,Shell Companies,440739123
@@ -3721,7 +3717,7 @@ NIR,Near Intelligence,,277504356
 NISN,Nisun International Enterprise Development Group,Credit Services,19487009
 NIU,Niu Technologies,Auto Manufacturers,318464101
 NJR,New Jersey Resources,Utilities - Regulated Gas,5154441600
-NKE,"NIKE, Inc.",Footwear & Accessories,1.94388E+11
+NKE,"NIKE, Inc.",Footwear & Accessories,1.94E+11
 NKLA,Nikola,Farm & Heavy Construction Machinery,674435879
 NKSH,National Bankshares,Banks - Regional,185289647
 NKTR,Nektar Therapeutics,Biotechnology,133013287
@@ -3829,7 +3825,7 @@ NVAX,Novavax,Biotechnology,645652840
 NVCN,Neovasc,Medical Devices,80431263
 NVCR,NovoCure,Medical Instruments & Supplies,6342063700
 NVCT,Nuvectis Pharma,Biotechnology,193403964
-NVDA,NVIDIA,Semiconductors,6.92203E+11
+NVDA,NVIDIA,Semiconductors,6.92E+11
 NVEC,NVE Corporation,Semiconductors,400910582
 NVEE,NV5 Global,Engineering & Construction,1614643703
 NVEI,Nuvei,Software - Infrastructure,6149821045
@@ -3838,11 +3834,11 @@ NVGS,Navigator Holdings,Oil & Gas Midstream,1065621200
 NVIV,InVivo Therapeutics Holdings,Biotechnology,3032077
 NVMI,Nova Ltd.,Semiconductor Equipment & Materials,2996304070
 NVNO,enVVeno Medical,Medical Devices,44328960
-NVO,Novo Nordisk,Biotechnology,3.58038E+11
+NVO,Novo Nordisk,Biotechnology,3.58E+11
 NVOS,Novo Integrated Sciences,Medical Care Facilities,17714882
 NVR,"NVR, Inc.",Residential Construction,18095798469
 NVRO,Nevro,Medical Devices,1284597480
-NVS,Novartis AG,Drug Manufacturers - General,1.95004E+11
+NVS,Novartis AG,Drug Manufacturers - General,1.95E+11
 NVST,Envista Holdings,Medical Instruments & Supplies,6672924160
 NVT,nVent Electric,Electrical Equipment & Parts,7113741324
 NVTA,Invitae,Diagnostics & Research,361940400
@@ -3881,8 +3877,6 @@ NYT,The New York Times Company,Publishing,6370604329
 NYXH,Nyxoah,Medical Instruments & Supplies,193071861
 O,Realty Income,REIT - Retail,41824191240
 OABI,OmniAb,Biotechnology,423678400
-OAKU,Oak Woods Acquisition,Shell Companies,66963000
-OAKUO,,,
 OB,Outbrain,Internet Content & Information,211304429
 OBE,Obsidian Energy,Oil & Gas E&P,527630080
 OBIO,Orchestra BioMed Holdings,Biotechnology,47209944
@@ -3995,7 +3989,7 @@ ORA,Ormat Technologies,Utilities - Renewable,5061141988
 ORAN,Orange,Telecom Services,31719244255
 ORC,Orchid Island Capital,REIT - Mortgage,419348787
 ORCC,Owl Rock Capital,Credit Services,4929929738
-ORCL,Oracle,Software - Infrastructure,2.50865E+11
+ORCL,Oracle,Software - Infrastructure,2.51E+11
 ORGN,Origin Materials,Chemicals,611037000
 ORGO,Organogenesis Holdings,Drug Manufacturers - Specialty & Generic,294645034
 ORGS,Orgenesis,Biotechnology,32441858
@@ -4132,7 +4126,7 @@ PEGR,Project Energy Reimagined Acquisition,Shell Companies,336645151
 PEGY,Pineapple Energy,Solar,14970788
 PEN,Penumbra,Medical Devices,10640077641
 PENN,PENN Entertainment,Resorts & Casinos,4829063003
-PEP,PepsiCo,Beverages - Non-Alcoholic,2.51084E+11
+PEP,PepsiCo,Beverages - Non-Alcoholic,2.51E+11
 PEPG,PepGen,Biotechnology,290852637
 PEPL,PepperLime Health Acquisition,Shell Companies,216325000
 PERF,Perfect,Software - Application,707218702
@@ -4146,7 +4140,7 @@ PETZ,TDH Holdings,Packaged Foods,13703875
 PEV,Phoenix Motor,Auto Manufacturers,12290068
 PFBC,Preferred Bank,Banks - Regional,791001477
 PFC,Premier Financial,Banks - Regional,740608272
-PFE,Pfizer,Drug Manufacturers - General,2.30292E+11
+PFE,Pfizer,Drug Manufacturers - General,2.30E+11
 PFG,Principal Financial Group,Insurance - Diversified,18067489280
 PFGC,Performance Food Group Company,Food Distribution,9421487600
 PFIE,Profire Energy,Oil & Gas Equipment & Services,58699120
@@ -4159,7 +4153,7 @@ PFSI,PennyMac Financial Services,Mortgage Finance,2982479052
 PFSW,PFSweb,Specialty Business Services,97062080
 PFTA,Portage Fintech Acquisition,Shell Companies,331017624
 PFX,PhenixFIN,Asset Management,77486880
-PG,The Procter & Gamble Company,Household & Personal Products,3.50781E+11
+PG,The Procter & Gamble Company,Household & Personal Products,3.51E+11
 PGC,Peapack-Gladstone Financial,Banks - Regional,528017968
 PGEN,Precigen,Biotechnology,308593580
 PGNY,Progyny,Health Information Services,2999307784
@@ -4210,7 +4204,7 @@ PLAY,Dave & Buster's Entertainment,Entertainment,1781103233
 PLBC,Plumas Bancorp,Banks - Regional,199578317
 PLBY,PLBY Group,Leisure,144658800
 PLCE,The Children's Place,Apparel Retail,492168950
-PLD,Prologis,REIT - Industrial,1.15219E+11
+PLD,Prologis,REIT - Industrial,1.15E+11
 PLG,Platinum Group Metals,Other Precious Metals & Mining,143294580
 PLL,Piedmont Lithium,Other Industrial Metals & Mining,1190959580
 PLM,PolyMet Mining,Other Industrial Metals & Mining,236876250
@@ -4232,7 +4226,7 @@ PLXP,PLx Pharma,Drug Manufacturers - Specialty & Generic,3790815
 PLXS,Plexus,Electronic Components,2702932925
 PLYA,Playa Hotels & Resorts,Resorts & Casinos,1589376048
 PLYM,Plymouth Industrial REIT,REIT - Industrial,937411553
-PM,Philip Morris International,Tobacco,1.50947E+11
+PM,Philip Morris International,Tobacco,1.51E+11
 PMCB,PharmaCyte Biotech,Biotechnology,50760294
 PMD,Psychemedics,Diagnostics & Research,30922442
 PME,Pingtan Marine Enterprise,Farm Products,23204070
@@ -4383,7 +4377,7 @@ PYXS,Pyxis Oncology,Biotechnology,148292206
 PZG,Paramount Gold Nevada,Gold,16866961
 PZZA,Papa John's International,Restaurants,2597028842
 QBTS,D-Wave Quantum,Computer Hardware,74051135
-QCOM,QUALCOMM,Semiconductors,1.46648E+11
+QCOM,QUALCOMM,Semiconductors,1.47E+11
 QCRH,QCR Holdings,Banks - Regional,738829660
 QD,Qudian,Credit Services,302970010
 QDEL,QuidelOrtho,Medical Instruments & Supplies,5924974995
@@ -4420,7 +4414,6 @@ QURE,uniQure,Biotechnology,946227550
 R,Ryder System,Rental & Leasing Services,4147295140
 RAAS,Cloopen Group Holding,Software - Application,284360100
 RACE,Ferrari,Auto Manufacturers,49217061652
-RACY,Relativity Acquisition,Shell Companies,54041701
 RAD,Rite Aid,Pharmaceutical Retailers,126612416
 RADI,Radius Global Infrastructure,Telecom Services,1419140592
 RAIL,FreightCar America,Railroads,55231800
@@ -4526,7 +4519,7 @@ RIDE,Lordstown Motors,Auto Manufacturers,158470948
 RIG,Transocean,Oil & Gas Drilling,4654553280
 RIGL,Rigel Pharmaceuticals,Biotechnology,239335796
 RILY,B. Riley Financial,Financial Conglomerates,863558475
-RIO,Rio Tinto Group,Other Industrial Metals & Mining,1.11272E+11
+RIO,Rio Tinto Group,Other Industrial Metals & Mining,1.11E+11
 RIOT,Riot Blockchain,Software - Application,1898489530
 RITM,Rithm Capital,REIT - Mortgage,3789839872
 RIVN,Rivian Automotive,Auto Manufacturers,13675032000
@@ -4607,7 +4600,7 @@ RSVR,Reservoir Media,Entertainment,419791504
 RTC,Baijiayun Group,Software - Application,645120983
 RTL,The Necessity Retail REIT,REIT - Diversified,897575217
 RTO,Rentokil Initial,Specialty Business Services,18401332080
-RTX,Raytheon Technologies,Aerospace & Defense,1.43292E+11
+RTX,Raytheon Technologies,Aerospace & Defense,1.43E+11
 RUM,Rumble,Software - Application,2791299840
 RUN,Sunrun,Solar,4320482400
 RUSHA,Rush Enterprises,Auto & Truck Dealerships,3071861302
@@ -4631,7 +4624,7 @@ RXO,"RXO, Inc.",Trucking,2290043640
 RXRX,Recursion Pharmaceuticals,Biotechnology,1341083527
 RXST,RxSight,Medical Devices,563378676
 RXT,Rackspace Technology,Software - Infrastructure,400148585
-RY,Royal Bank of Canada,Banks - Diversified,1.32852E+11
+RY,Royal Bank of Canada,Banks - Diversified,1.33E+11
 RYAAY,Ryanair Holdings,Airlines,21472943816
 RYAM,Rayonier Advanced Materials,Chemicals,402528357
 RYAN,Ryan Specialty Holdings,Insurance - Specialty,10626619762
@@ -4663,7 +4656,7 @@ SAND,Sandstorm Gold,Gold,1736545044
 SANG,Sangoma Technologies,Software - Infrastructure,91479341
 SANM,Sanmina,Electronic Components,3559236123
 SANW,S&W Seed Company,Farm Products,61825192
-SAP,SAP SE,Software - Application,1.47699E+11
+SAP,SAP SE,Software - Application,1.48E+11
 SAR,Saratoga Investment,Asset Management,300591840
 SASI,Sigma Labs,Information Technology Services,4739988
 SASR,Sandy Spring Bancorp,Banks - Regional,1160633118
@@ -4690,7 +4683,7 @@ SBS,Companhia de Saneamento Básico do Estado de São Paulo - SABESP,Utilities -
 SBSI,Southside Bancshares,Banks - Regional,1042260880
 SBSW,Sibanye Stillwater,Gold,5887173960
 SBT,"Sterling Bancorp, Inc. (Southfield, MI)",Banks - Regional,287723836
-SBUX,Starbucks,Restaurants,1.19677E+11
+SBUX,Starbucks,Restaurants,1.20E+11
 SBXC,SilverBox Corp III,Shell Companies,146015000
 SCAQ,Stratim Cloud Acquisition,Shell Companies,316564568
 SCCO,Southern Copper,Copper,58949028720
@@ -4784,7 +4777,7 @@ SHBI,Shore Bancshares,Banks - Regional,283672200
 SHC,Sotera Health Company,Diagnostics & Research,5058196073
 SHCO,Soho House & Co,Lodging,1307901900
 SHCR,Sharecare,Health Information Services,501998400
-SHEL,Shell,Oil & Gas Integrated,1.97436E+11
+SHEL,Shell,Oil & Gas Integrated,1.97E+11
 SHEN,Shenandoah Telecommunications Company,Telecom Services,955692234
 SHFS,SHF Holdings,Banks - Regional,15260016
 SHG,Shinhan Financial Group Co.,Banks - Regional,13607448311
@@ -4927,7 +4920,7 @@ SNTG,Sentage Holdings,Credit Services,4648000
 SNTI,Senti Biosciences,Biotechnology,52118240
 SNV,Synovus Financial,Banks - Regional,4502567103
 SNX,TD SYNNEX,Electronics & Computer Distribution,9060899060
-SNY,Sanofi,Drug Manufacturers - General,1.3591E+11
+SNY,Sanofi,Drug Manufacturers - General,1.36E+11
 SO,The Southern Company,Utilities - Regulated Electric,75766354460
 SOBR,SOBR Safe,Scientific & Technical Instruments,33444522
 SOFI,SoFi Technologies,Credit Services,4853754197
@@ -4943,7 +4936,7 @@ SONM,Sonim Technologies,Communication Equipment,43899650
 SONN,Sonnet BioTherapeutics Holdings,Biotechnology,7283844
 SONO,Sonos,Consumer Electronics,2498567760
 SONX,Sonendo,Medical Devices,101167200
-SONY,Sony Group,Consumer Electronics,1.11893E+11
+SONY,Sony Group,Consumer Electronics,1.12E+11
 SOPA,Society Pass,Software - Application,27624456
 SOPH,SOPHiA GENETICS,Health Information Services,319249938
 SOS,SOS Limited,Software - Infrastructure,26153415
@@ -4957,7 +4950,7 @@ SPCE,Virgin Galactic Holdings,Aerospace & Defense,1175800022
 SPCM,"Sound Point Acquisition Corp I,",Shell Companies,340903641
 SPFI,South Plains Financial,Banks - Regional,364995539
 SPG,Simon Property Group,REIT - Retail,42863683916
-SPGI,S&P Global,Financial Data & Stock Exchanges,1.13066E+11
+SPGI,S&P Global,Financial Data & Stock Exchanges,1.13E+11
 SPH,"Suburban Propane Partners,",Utilities - Regulated Gas,972657608
 SPI,SPI Energy Co.,Solar,35950451
 SPIR,Spire Global,Specialty Business Services,96176631
@@ -5113,7 +5106,7 @@ SY,So-Young International,Health Information Services,241868559
 SYBT,Stock Yards Bancorp,Banks - Regional,1614890694
 SYBX,Synlogic,Biotechnology,44568579
 SYF,Synchrony Financial,Credit Services,12708978033
-SYK,Stryker,Medical Devices,1.08228E+11
+SYK,Stryker,Medical Devices,1.08E+11
 SYM,Symbotic,Shell Companies,13221277262
 SYNA,Synaptics,Semiconductors,4557738762
 SYNH,Syneos Health,Diagnostics & Research,3677444420
@@ -5123,7 +5116,7 @@ SYT,SYLA Technologies Co.,Real Estate - Development,1872232750
 SYTA,Siyata Mobile,Communication Equipment,10043710
 SYY,Sysco,Food Distribution,39202256920
 SZZL,Sizzle Acquisition,Shell Companies,111965133
-T,AT&T Inc.,Telecom Services,1.3725E+11
+T,AT&T Inc.,Telecom Services,1.37E+11
 TA,TravelCenters of America,Specialty Retail,1306271100
 TAC,TransAlta,Utilities - Independent Power Producers,2413162728
 TACT,TransAct Technologies,Computer Hardware,63613392
@@ -5150,7 +5143,6 @@ TBIO,Telesis Bio,Medical Devices,1104234763
 TBLA,Taboola.com,Internet Content & Information,804238720
 TBLD,Thornburg Income Builder Opportunities Trust,,500798459
 TBLT,ToughBuilt Industries,Tools & Accessories,15837710
-TBMC,Trailblazer Merger Corporation I,Shell Companies,85757937
 TBNK,Territorial Bancorp,Banks - Regional,175162555
 TBPH,Theravance Biopharma,Biotechnology,682079825
 TC,TuanChe,Internet Content & Information,14950620
@@ -5174,7 +5166,7 @@ TCRX,TScan Therapeutics,Biotechnology,51672600
 TCS,The Container Store Group,Specialty Retail,173656441
 TCVA,TCV Acquisition,Shell Companies,523263990
 TCX,Tucows,Software - Infrastructure,210637665
-TD,The Toronto-Dominion Bank,Banks - Diversified,1.09618E+11
+TD,The Toronto-Dominion Bank,Banks - Diversified,1.10E+11
 TDC,Teradata,Software - Infrastructure,4122738560
 TDCX,TDCX Inc.,Specialty Business Services,1297290771
 TDG,TransDigm Group,Aerospace & Defense,40241529605
@@ -5269,7 +5261,7 @@ TLRY,Tilray Brands,Drug Manufacturers - Specialty & Generic,1613160923
 TLS,Telos,Information Technology Services,177377045
 TLSA,Tiziana Life Sciences,Biotechnology,111641207
 TLYS,Tilly's,Apparel Retail,234259861
-TM,Toyota Motor,Auto Manufacturers,1.92426E+11
+TM,Toyota Motor,Auto Manufacturers,1.92E+11
 TMBR,Timber Pharmaceuticals,Biotechnology,5051448
 TMC,TMC the metals company,Other Industrial Metals & Mining,243963480
 TMCI,Treace Medical Concepts,Medical Devices,1540522159
@@ -5277,13 +5269,13 @@ TMDX,TransMedics Group,Medical Devices,2438218226
 TME,Tencent Music Entertainment Group,Internet Content & Information,14035261870
 TMHC,Taylor Morrison Home,Residential Construction,4143519740
 TMKR,Tastemaker Acquisition,Shell Companies,356729289
-TMO,Thermo Fisher Scientific,Diagnostics & Research,2.2215E+11
+TMO,Thermo Fisher Scientific,Diagnostics & Research,2.22E+11
 TMP,Tompkins Financial,Banks - Regional,961389063
 TMPO,Tempo Automation Holdings,Electronic Components,21381212
 TMQ,Trilogy Metals,Other Industrial Metals & Mining,79269363
 TMST,TimkenSteel,Steel,804761034
 TMTC,TMT Acquisition,Shell Companies,96022800
-TMUS,T-Mobile US,Telecom Services,1.76615E+11
+TMUS,T-Mobile US,Telecom Services,1.77E+11
 TNC,Tennant Company,Specialty Industrial Machinery,1271341148
 TNDM,Tandem Diabetes Care,Medical Devices,2620486141
 TNET,TriNet Group,Staffing & Employment Services,4835318301
@@ -5364,9 +5356,9 @@ TSCO,Tractor Supply Company,Specialty Retail,25829720800
 TSE,Trinseo,Specialty Chemicals,729310065
 TSEM,Tower Semiconductor,Semiconductors,4669746380
 TSHA,Taysha Gene Therapies,Biotechnology,49803978
-TSLA,Tesla,Auto Manufacturers,6.56424E+11
+TSLA,Tesla,Auto Manufacturers,6.56E+11
 TSLX,Sixth Street Specialty Lending,Asset Management,1489424117
-TSM,Taiwan Semiconductor Manufacturing Company,Semiconductors,4.82409E+11
+TSM,Taiwan Semiconductor Manufacturing Company,Semiconductors,4.82E+11
 TSN,Tyson Foods,Farm Products,21241602437
 TSP,TuSimple Holdings,Trucking,353909871
 TSQ,Townsquare Media,Advertising Agencies,138985600
@@ -5376,7 +5368,7 @@ TT,Trane Technologies,Building Products & Equipment,42145219972
 TTC,The Toro Company,Tools & Accessories,11592320600
 TTCF,Tattooed Chef,Packaged Foods,118794928
 TTD,The Trade Desk,Software - Application,30715574625
-TTE,TotalEnergies SE,Oil & Gas Integrated,1.45053E+11
+TTE,TotalEnergies SE,Oil & Gas Integrated,1.45E+11
 TTEC,TTEC Holdings,Information Technology Services,1758212811
 TTEK,Tetra Tech,Engineering & Construction,7819446351
 TTGT,TechTarget,Internet Content & Information,1035556788
@@ -5409,7 +5401,7 @@ TWST,Twist Bioscience,Diagnostics & Research,887960149
 TX,Ternium,Steel,8099668080
 TXG,10x Genomics,Health Information Services,6677895742
 TXMD,TherapeuticsMD,Drug Manufacturers - Specialty & Generic,35501625
-TXN,Texas Instruments,Semiconductors,1.68775E+11
+TXN,Texas Instruments,Semiconductors,1.69E+11
 TXO,"TXO Energy Partners,",Oil & Gas E&P,710632500
 TXRH,Texas Roadhouse,Restaurants,7241911050
 TXT,Textron,Aerospace & Defense,14384505800
@@ -5459,7 +5451,7 @@ UI,Ubiquiti,Communication Equipment,16421351135
 UIHC,United Insurance Holdings,Insurance - Property & Casualty,127955808
 UIS,Unisys,Information Technology Services,275014400
 UK,Ucommune International,Real Estate Services,4579152
-UL,Unilever,Household & Personal Products,1.31338E+11
+UL,Unilever,Household & Personal Products,1.31E+11
 ULBI,Ultralife,Electrical Equipment & Parts,64857072
 ULCC,Frontier Group Holdings,Airlines,2241286290
 ULH,Universal Logistics Holdings,Trucking,766190260
@@ -5472,10 +5464,10 @@ UNB,Union Bankshares,Banks - Regional,99703276
 UNCY,Unicycive Therapeutics,Biotechnology,35186340
 UNF,UniFirst,Specialty Business Services,3293491978
 UNFI,United Natural Foods,Food Distribution,1565134665
-UNH,UnitedHealth Group,Healthcare Plans,4.40854E+11
+UNH,UnitedHealth Group,Healthcare Plans,4.41E+11
 UNIT,Uniti Group,REIT - Specialty,842248122
 UNM,Unum Group,Insurance - Life,7804950640
-UNP,Union Pacific,Railroads,1.23146E+11
+UNP,Union Pacific,Railroads,1.23E+11
 UNTY,Unity Bancorp,Banks - Regional,241220312
 UNVR,Univar Solutions,Chemicals,5519641790
 UONE,Urban One,Broadcasting,291403583
@@ -5485,7 +5477,7 @@ UPBD,Upbound Group,Software - Application,1364472876
 UPC,Universe Pharmaceuticals INC,Drug Manufacturers - Specialty & Generic,12658500
 UPH,UpHealth,Health Information Services,24889556
 UPLD,Upland Software,Software - Application,144114934
-UPS,United Parcel Service,Integrated Freight & Logistics,1.695E+11
+UPS,United Parcel Service,Integrated Freight & Logistics,1.70E+11
 UPST,Upstart Holdings,Credit Services,1293229896
 UPTD,TradeUP Acquisition,Shell Companies,24650554
 UPWK,Upwork,Staffing & Employment Services,1499628320
@@ -5528,7 +5520,7 @@ UVSP,Univest Financial,Banks - Regional,695392080
 UVV,Universal,Tobacco,1298735106
 UWMC,UWM Holdings,Mortgage Finance,7881384936
 UXIN,Uxin Limited,Auto & Truck Dealerships,102714304
-V,Visa Inc.,Credit Services,4.80257E+11
+V,Visa Inc.,Credit Services,4.80E+11
 VABK,Virginia National Bankshares,Banks - Regional,191928229
 VAC,Marriott Vacations Worldwide,Resorts & Casinos,5021566044
 VACC,Vaccitech,Biotechnology,85878912
@@ -5695,7 +5687,7 @@ VXRT,Vaxart,Biotechnology,109457419
 VYGR,Voyager Therapeutics,Biotechnology,360343812
 VYNE,VYNE Therapeutics,Biotechnology,10053952
 VYNT,Vyant Bio,Biotechnology,3427980
-VZ,Verizon Communications,Telecom Services,1.63338E+11
+VZ,Verizon Communications,Telecom Services,1.63E+11
 VZIO,VIZIO Holding,Consumer Electronics,1791063753
 VZLA,Vizsla Silver,Other Industrial Metals & Mining,315767840
 W,Wayfair,Internet Retail,3830214954
@@ -5739,7 +5731,7 @@ WETG,WeTrade Group,Software - Application,50129906
 WEX,WEX Inc.,Software - Infrastructure,7931672203
 WEYS,Weyco Group,Footwear & Accessories,241522149
 WF,Woori Financial Group,Banks - Regional,6377217880
-WFC,Wells Fargo & Company,Banks - Diversified,1.41188E+11
+WFC,Wells Fargo & Company,Banks - Diversified,1.41E+11
 WFCF,Where Food Comes From,Software - Application,75300319
 WFG,West Fraser Timber Co.,Lumber & Wood Production,5789952921
 WFRD,Weatherford International,Oil & Gas Equipment & Services,4207339542
@@ -5783,7 +5775,7 @@ WMG,Warner Music Group,Entertainment,17323068137
 WMK,Weis Markets,Grocery Stores,2277487528
 WMPN,William Penn Bancorporation,Banks - Regional,158899851
 WMS,Advanced Drainage Systems,Building Products & Equipment,6840664614
-WMT,Walmart,Discount Stores,3.97475E+11
+WMT,Walmart,Discount Stores,3.97E+11
 WNC,Wabash National,Farm & Heavy Construction Machinery,1174664300
 WNEB,Western New England Bancorp,Banks - Regional,182349847
 WNNR,Andretti Acquisition,Shell Companies,302162511
@@ -5858,7 +5850,7 @@ XM,Qualtrics International,Software - Application,10800986098
 XMTR,Xometry,Specialty Industrial Machinery,714766557
 XNCR,Xencor,Biotechnology,1674239489
 XNET,Xunlei,Advertising Agencies,119617480
-XOM,Exxon Mobil,Oil & Gas Integrated,4.46424E+11
+XOM,Exxon Mobil,Oil & Gas Integrated,4.46E+11
 XOMA,XOMA Corporation,Biotechnology,253457215
 XOS,"Xos, Inc.",Farm & Heavy Construction Machinery,88217850
 XP,XP Inc.,Capital Markets,6636611414

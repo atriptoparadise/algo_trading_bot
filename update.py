@@ -4,6 +4,8 @@ import pickle
 import requests, json
 from datetime import datetime, timedelta
 from config import *
+from joblib import Parallel, delayed
+
 
 holidays = [datetime(2022, 4, 15).date(),
             datetime(2022, 5, 30).date(),
@@ -126,6 +128,12 @@ def remove_old_data(saved_data, ticker, days):
     saved_data[ticker]['high'] = saved_data[ticker]['high'][count:]
     saved_data[ticker]['time'] = saved_data[ticker]['time'][count:]
 
+def init_data_wrapper(args):
+    return init_data(*args)
+
+def update_ticker_wrapper(args):
+    return update_ticker(*args)
+
 def run(ticker_list=None, start_date=None, end_date=None):
     """
     end_date is required.
@@ -136,23 +144,23 @@ def run(ticker_list=None, start_date=None, end_date=None):
     saved_list = saved_data.keys()
     
     if ticker_list is None:
-        for ticker in saved_list:
-            update_ticker(ticker, end_date, saved_data[ticker]['date'], saved_data)
+        args_list = [(ticker, end_date, saved_data[ticker]['date'], saved_data) for ticker in saved_list]
+        Parallel(n_jobs=-1)(delayed(update_ticker_wrapper)(args) for args in args_list)
     else:
-        for ticker in ticker_list:
-            if ticker not in saved_list:
-                init_data(ticker=ticker, data=saved_data, 
-                        start_date=start_date, end_date=end_date)
-            else:
-                update_ticker(ticker, end_date, saved_data[ticker]['date'], saved_data)
+        new_tickers = [ticker for ticker in ticker_list if ticker not in saved_list]
+        args_list = [(ticker, saved_data, start_date, end_date) for ticker in new_tickers]
+        Parallel(n_jobs=-1)(delayed(init_data_wrapper)(args) for args in args_list)
+
+        existing_tickers = [ticker for ticker in ticker_list if ticker in saved_list]
+        args_list = [(ticker, end_date, saved_data[ticker]['date'], saved_data) for ticker in existing_tickers]
+        Parallel(n_jobs=-1)(delayed(update_ticker_wrapper)(args) for args in args_list)
 
     save_data('data', saved_data)
 
-
 if __name__ == "__main__":	
     start_date = start = datetime(2023, 2, 1).date()
-    end_date = start = datetime(2023, 5, 1).date()
+    end_date = start = datetime(2023, 5, 2).date()
 
-    ticker_df = pd.read_csv('data/stocks-list (1).csv')
+    ticker_df = pd.read_csv('data/stocks_list_202304.csv')
     ticker_list = ticker_df.Symbol.unique()
     run(ticker_list=ticker_list, start_date=start_date, end_date=end_date)

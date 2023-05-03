@@ -22,6 +22,7 @@ class LiveTrade(object):
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
         self.holding_stocks = []
+        self.open_time = datetime.today().replace(hour=9, minute=30, second=0, microsecond=0)
 
     def setup(self):
         self.get_holding_stocks()
@@ -204,20 +205,28 @@ class LiveTrade(object):
                 open_price, high = self.get_open_price(ticker, today)
 
                 if self.is_signal_one(current_price, prev_high) or self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
-                    qty = self.order_amount // current_price
+                    # remove below if-else when real trading: pre hours wont execute mkt order
+                    if datetime.now() >= self.open_time:
+                        qty = self.order_amount // current_price
 
-                    self.create_order(symbol=ticker, qty=qty, side='buy',
-                                      order_type='market', time_in_force='day')
-                    self.trailing_stop_order(
-                        symbol=ticker, qty=qty, trail_percent=1)
+                        self.create_order(symbol=ticker, qty=qty, side='buy',
+                                        order_type='market', time_in_force='day')
+                        self.trailing_stop_order(
+                            symbol=ticker, qty=qty, trail_percent=1)
 
-                    print(
-                        f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
-                    logging.warning(
-                        f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
-                    logging.warning('-' * 60)
-                    logging.warning('')
-                    order = 1
+                        print(
+                            f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
+                        logging.warning(
+                            f'{ticker} - ordered!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
+                        logging.warning('-' * 60)
+                        logging.warning('')
+                        order = 1
+                    else:
+                        print(
+                            f'{ticker} - Signal pre hours, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
+                        logging.warning(
+                            f'{ticker} - Signal pre hours!, price: {current_price}, volume moving: {volume_moving} @ {datetime.now()}')
+
 
                 if datetime.now().hour < 15:
                     exceed_nine_days_close, nine_days_close = True, 0

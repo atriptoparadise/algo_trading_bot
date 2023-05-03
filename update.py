@@ -4,7 +4,6 @@ import pickle
 import requests, json
 from datetime import datetime, timedelta
 from config import *
-from joblib import Parallel, delayed
 
 
 holidays = [datetime(2022, 4, 15).date(),
@@ -112,14 +111,14 @@ def update_ticker(ticker, today, last_updated_date, saved_data):
             print(ticker, date)
             pass
     
-    remove_old_data(saved_data, ticker, 90)
+    remove_old_data(saved_data, ticker, today, 90)
 
-def remove_old_data(saved_data, ticker, days):
-    today = datetime.now()
+def remove_old_data(saved_data, ticker, today, days=90):
+    """Remove data that exceeds store limit, default is 90 days"""
     count = 0
 
     for time in saved_data[ticker]['time']:
-        if (today - datetime.strptime(time, '%Y-%m-%d %H:%M:%S')).days > days:
+        if (today - datetime.strptime(time, '%Y-%m-%d %H:%M:%S').date()).days > days:
             count += 1
 
     if count == 0:
@@ -127,7 +126,7 @@ def remove_old_data(saved_data, ticker, days):
     saved_data[ticker]['volume'] = saved_data[ticker]['volume'][count:]
     saved_data[ticker]['high'] = saved_data[ticker]['high'][count:]
     saved_data[ticker]['time'] = saved_data[ticker]['time'][count:]
-
+    
 def init_data_wrapper(args):
     return init_data(*args)
 
@@ -144,16 +143,15 @@ def run(ticker_list=None, start_date=None, end_date=None):
     saved_list = saved_data.keys()
     
     if ticker_list is None:
-        args_list = [(ticker, end_date, saved_data[ticker]['date'], saved_data) for ticker in saved_list]
-        Parallel(n_jobs=-1)(delayed(update_ticker_wrapper)(args) for args in args_list)
+        for ticker in saved_list:
+            update_ticker(ticker, end_date, saved_data[ticker]['date'], saved_data)
     else:
-        new_tickers = [ticker for ticker in ticker_list if ticker not in saved_list]
-        args_list = [(ticker, saved_data, start_date, end_date) for ticker in new_tickers]
-        Parallel(n_jobs=-1)(delayed(init_data_wrapper)(args) for args in args_list)
-
-        existing_tickers = [ticker for ticker in ticker_list if ticker in saved_list]
-        args_list = [(ticker, end_date, saved_data[ticker]['date'], saved_data) for ticker in existing_tickers]
-        Parallel(n_jobs=-1)(delayed(update_ticker_wrapper)(args) for args in args_list)
+        for ticker in ticker_list:
+            if ticker not in saved_list:
+                init_data(ticker=ticker, data=saved_data, 
+                        start_date=start_date, end_date=end_date)
+            else:
+                update_ticker(ticker, end_date, saved_data[ticker]['date'], saved_data)
 
     save_data('data', saved_data)
 

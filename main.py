@@ -120,7 +120,8 @@ class LiveTrade(object):
         logging.warning((json.loads(r.content)))
         return json.loads(r.content)
 
-    def trailing_stop_order(self, symbol, qty, trail_percent):
+    def trailing_stop_order(self, symbol, buy_qty, trail_percent):
+        qty = utils.get_holding_qty(symbol)
         data = {
             "side": "sell",
             "symbol": symbol,
@@ -129,6 +130,10 @@ class LiveTrade(object):
             "time_in_force": "day",
             "trail_percent": trail_percent
         }
+
+        if qty != buy_qty:
+            print(f'{symbol} filed trailing stop on {qty} over buy_qty {buy_qty}')
+            logging.warning(f'{symbol} filed trailing stop on {qty} over buy_qty {buy_qty}')
 
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         logging.warning((json.loads(r.content)))

@@ -23,6 +23,14 @@ def load_data(filename):
                 break
     return objects[0]
 
+def get_holding_qty(ticker):
+    response = requests.get(
+                "{}/v2/positions".format(API_URL), headers=HEADERS)
+    content = json.loads(response.content)
+    for item in content:
+        if item['symbol'] == ticker:
+            return float(item['qty'])
+    return 0
 
 def get_open_price(ticker, date):
     """Return today's open and high"""

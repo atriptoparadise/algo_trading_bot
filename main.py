@@ -19,7 +19,8 @@ class LiveTrade(object):
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
         self.holding_stocks = []
-        self.open_time = datetime.today().replace(hour=9, minute=30, second=0, microsecond=0)
+        self.open_time = datetime.today().replace(
+            hour=9, minute=30, second=0, microsecond=0)
 
     def setup(self):
         self.get_holding_stocks()
@@ -29,13 +30,11 @@ class LiveTrade(object):
             ticker for ticker in ticker_list if ticker not in self.holding_stocks]
         return data, run_list
 
-
     def get_holding_stocks(self):
         response = requests.get(
             "{}/v2/positions".format(API_URL), headers=HEADERS)
         content = json.loads(response.content)
         self.holding_stocks = [item['symbol'] for item in content]
-
 
     def is_signal_one(self, current_price, prev_high):
         """Signal 1:
@@ -82,9 +81,10 @@ class LiveTrade(object):
                         qty = self.order_amount // current_price
 
                         self.create_order(symbol=ticker, qty=qty, side='buy',
-                                        order_type='market', time_in_force='day')
-                        
-                        utils.log_print_text(ticker, current_price, volume_moving, bid_ask_spread, send_text=True, is_order=1)
+                                          order_type='market', time_in_force='day')
+
+                        utils.log_print_text(
+                            ticker, current_price, volume_moving, bid_ask_spread, send_text=True, is_order=1)
 
                         self.trailing_stop_order(
                             symbol=ticker, qty=qty, trail_percent=1)
@@ -92,14 +92,16 @@ class LiveTrade(object):
                             f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
                         order = 1
                     else:
-                        utils.log_print_text(ticker, current_price, volume_moving, bid_ask_spread, send_text=True, is_order=0)
+                        utils.log_print_text(
+                            ticker, current_price, volume_moving, bid_ask_spread, send_text=True, is_order=0)
                         order = 0
                 else:
-                    utils.log_print_text(ticker, current_price, volume_moving, bid_ask_spread, send_text=False, is_order=2)
+                    utils.log_print_text(
+                        ticker, current_price, volume_moving, bid_ask_spread, send_text=False, is_order=2)
                     order = 0
 
-                utils.check_other_condi_add_signal(ticker, current_price, today, open_price, 
-                                                   day_high, self.high_to_current_ratio, ticker_data, 
+                utils.check_other_condi_add_signal(ticker, current_price, today, open_price,
+                                                   day_high, self.high_to_current_ratio, ticker_data,
                                                    prev_high, order, volume_moving, prev_vol_max, bid_ask_spread)
 
         except Exception as e:

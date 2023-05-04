@@ -169,23 +169,10 @@ def add_signal_to_csv(ticker, today, order, after_3pm, good, exceed_nine_days_cl
     df.to_csv('data/signals.csv')
 
 
-def send_text(body, to_number):
-    account_sid = 'AC432bde0058edbeef9c8d6e8a329cd7f9'
-    auth_token = '2301dfb75b7e6ee9e09ed4f10938292e'
-    from_number = '+18889669148'
-
-    client = Client(account_sid, auth_token)
-    client.messages.create(
-        body=body,
-        from_=from_number,
-        to=to_number
-    )
-
-
 def send_signal_text(text, to_number=['+16467156606', '+19174975345', '+15713520589']):
-    account_sid = 'AC432bde0058edbeef9c8d6e8a329cd7f9'
-    auth_token = '2301dfb75b7e6ee9e09ed4f10938292e'
-    from_number = '+18889669148'
+    account_sid = TW_ACCOUNT_SID
+    auth_token = TW_AUTH_TOKEN
+    from_number = TW_NUMBER
 
     client = Client(account_sid, auth_token)
 

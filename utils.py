@@ -184,18 +184,18 @@ def send_signal_text(text, to_number=['+16467156606', '+19174975345', '+15713520
         )
 
 
-def log_print_text(ticker, current_price, volume_moving, bid_ask_spread, send_text=True, is_order=1):
+def log_print_text(ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, is_order=1):
     """
     is_order: {0: 'pre hours', 
             1: 'ordered',
             2: 'minimal condition'}
     """
     if is_order == 1:
-        log_text = f'{ticker} ordered!\nprice: {current_price}, last_15m_vol: {volume_moving}\nbid ask spread: {bid_ask_spread} @ {datetime.now()}'
+        log_text = f'{ticker} ordered!, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
     elif is_order == 0:
-        log_text = f'{ticker} pre hours, price: {current_price}, last_15m_vol: {volume_moving}\nbid ask spread: {bid_ask_spread} @ {datetime.now()}'
+        log_text = f'{ticker} pre hours, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
     else:
-        log_text = f'{ticker} minimal condition, price: {current_price}, last_15m_vol: {volume_moving}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
+        log_text = f'{ticker} minimal condition, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
 
     print(log_text)
     logging.warning(log_text)

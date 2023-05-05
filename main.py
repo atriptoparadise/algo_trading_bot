@@ -67,13 +67,13 @@ class LiveTrade(object):
                 ticker, today)
             prev_vol_max, prev_high = max(
                 ticker_data['volume']), max(ticker_data['high'])
+            bid_ask_spread = utils.get_bid_ask_spread_ratio(ticker)
 
-            # Signal 1 - vol >= vol_max * 85%; price >= prev_high; curr > 1; before 10 am
-            # Signal 2 - vol >= vol_max; curr > open * 1.15; curr > 1; before 12 pm
-            # minimal conditions: vol >= vol_max * 85% + curr > 1
-            if volume_moving >= self.alpha_volume * prev_vol_max and current_price > 1:
+            # Signal 1 - vol >= vol_max * 85%; price >= prev_high; curr > 1; spread_ratio <= 0.2%; before 10 am
+            # Signal 2 - vol >= vol_max; curr > open * 1.15; curr > 1; spread_ratio <= 0.2%; before 12 pm
+            # minimal conditions: vol >= vol_max * 85%; curr > 1; spread_ratio <= 0.2%
+            if volume_moving >= self.alpha_volume * prev_vol_max and current_price > 1 and bid_ask_spread <= 0.2:
                 open_price, day_high = utils.get_open_price(ticker, today)
-                bid_ask_spread = utils.get_bid_ask_spread_ratio(ticker)
 
                 if self.is_signal_one(current_price, prev_high) or self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
                     # remove below if-else when real trading: pre hours wont execute mkt order
@@ -84,7 +84,7 @@ class LiveTrade(object):
                                           order_type='market', time_in_force='day')
 
                         utils.log_print_text(
-                            ticker, current_price, volume_moving, bid_ask_spread, send_text=True, is_order=1)
+                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, is_order=1)
 
                         self.trailing_stop_order(
                             symbol=ticker, qty=qty, trail_percent=1)
@@ -93,11 +93,11 @@ class LiveTrade(object):
                         order = 1
                     else:
                         utils.log_print_text(
-                            ticker, current_price, volume_moving, bid_ask_spread, send_text=True, is_order=0)
+                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, is_order=0)
                         order = 0
                 else:
                     utils.log_print_text(
-                        ticker, current_price, volume_moving, bid_ask_spread, send_text=False, is_order=2)
+                        ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=False, is_order=2)
                     order = 0
 
                 utils.check_other_condi_add_signal(ticker, current_price, today, open_price,

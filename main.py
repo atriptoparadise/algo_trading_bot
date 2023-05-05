@@ -77,32 +77,38 @@ class LiveTrade(object):
 
                 if self.is_signal_one(current_price, prev_high) or self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
                     # remove below if-else when real trading: pre hours wont execute mkt order
+                    # Trading hours
                     if datetime.now() >= self.open_time:
                         qty = self.order_amount // current_price
 
                         self.create_order(symbol=ticker, qty=qty, side='buy',
                                           order_type='market', time_in_force='day')
 
+                        signal_type = 1
                         utils.log_print_text(
-                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, is_order=1)
+                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=signal_type)
 
                         self.trailing_stop_order(
                             symbol=ticker, qty=qty, trail_percent=1)
                         logging.warning(
                             f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
-                        order = 1
+                    
+                    # Pre hours
                     else:
+                        signal_type = 0
                         utils.log_print_text(
-                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, is_order=0)
-                        order = 0
+                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=signal_type)
+                
+                # Only satisfies minial conditions
                 else:
+                    signal_type = 2
                     utils.log_print_text(
-                        ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=False, is_order=2)
-                    order = 0
+                        ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=False, signal_type=signal_type)
+                    
 
                 utils.check_other_condi_add_signal(ticker, current_price, today, open_price,
                                                    day_high, self.high_to_current_ratio, ticker_data,
-                                                   prev_high, order, volume_moving, prev_vol_max, bid_ask_spread)
+                                                   prev_high, signal_type, volume_moving, prev_vol_max, bid_ask_spread)
 
         except Exception as e:
             pass

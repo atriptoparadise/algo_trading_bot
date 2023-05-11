@@ -139,7 +139,7 @@ def add_signal_to_csv(ticker, today, order, after_3pm, good, exceed_nine_days_cl
     else:
         high_current_check = 0
 
-    new_signal = [ticker, date, time, ticker + date.strftime('%Y/%m/%d') + str(order), order,
+    new_signal = [ticker, date, time, ticker + date.strftime('%Y/%m/%d') + order, order,
                   weekday, after_3pm - 1, high_current_check, exceed_nine_days_close,
                   1 if exceeded else 0, volume_moving, prev_vol_max,
                   volume_moving / prev_vol_max, current_price, prev_high,
@@ -176,24 +176,14 @@ def send_signal_text(text, to_number=['+16467156606', '+19174975345', '+15713520
         )
 
 
-def log_print_text(ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=1):
-    """
-    signal_type: {0: 'pre hours', 
-                1: 'ordered',
-                2: 'minimal condition'}
-    """
-    if signal_type == 1:
-        log_text = f'{ticker} ordered!, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
-    elif signal_type == 0:
-        log_text = f'{ticker} pre hours, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
-    else:
-        log_text = f'{ticker} minimal condition, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
+def log_print_text(ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type='Signal 1'):
+    log_text = f'{ticker} {signal_type}, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
 
     print(log_text)
     logging.warning(log_text)
 
     df = pd.read_csv('data/signals.csv', index_col=0)
-    ticker_date = ticker + datetime.today().strftime('%Y/%m/%d') + str(signal_type)
+    ticker_date = ticker + datetime.today().strftime('%Y/%m/%d') + signal_type
     
     if send_text and ticker_date not in df.symbol_date.unique():
         send_signal_text(text=log_text)

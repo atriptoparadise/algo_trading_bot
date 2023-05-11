@@ -95,27 +95,32 @@ class LiveTrade(object):
                         self.create_order(symbol=ticker, qty=qty, side='buy',
                                           order_type='market', time_in_force='day')
 
-                        signal_type = 1
+                        # Add Signal type
+                        if self.is_signal_one(current_price, prev_high, day_high) and self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
+                            signal_type = 'Signal 1 & 2!'
+                        elif self.is_signal_one(current_price, prev_high, day_high):
+                            signal_type = 'Signal 1!'
+                        else:
+                            signal_type = 'Signal 2!'
+
                         utils.log_print_text(
                             ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=signal_type)
                         
-                        t.sleep(1)
+                        # t.sleep(1)
                         self.trailing_stop_order(
-                            symbol=ticker, buy_qty=qty, trail_percent=1)
+                            symbol=ticker, buy_qty=qty, trail_percent=2)
                         logging.warning(
                             f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
                     
                     # Pre hours
                     else:
-                        signal_type = 0
                         utils.log_print_text(
-                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=signal_type)
+                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type='pre hours')
                 
                 # Only satisfies minimal conditions
                 else:
-                    signal_type = 2
                     utils.log_print_text(
-                        ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=False, signal_type=signal_type)
+                        ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=False, signal_type='minimal condition')
                     
                 # Add to csv for all satisfy minimal conditions
                 utils.check_other_condi_add_signal(ticker, current_price, today, open_price,

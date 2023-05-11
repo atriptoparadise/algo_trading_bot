@@ -23,14 +23,6 @@ def load_data(filename):
                 break
     return objects[0]
 
-def get_holding_qty(ticker):
-    response = requests.get(
-                "{}/v2/positions".format(API_URL), headers=HEADERS)
-    content = json.loads(response.content)
-    for item in content:
-        if item['symbol'] == ticker:
-            return float(item['qty'])
-    return 0
 
 def get_open_price(ticker, date):
     """Return today's open and high"""
@@ -201,7 +193,7 @@ def log_print_text(ticker, current_price, prev_high, volume_moving, prev_vol_max
     logging.warning(log_text)
 
     df = pd.read_csv('data/signals.csv', index_col=0)
-    ticker_date = ticker + datetime.today().strftime('%Y-%m-%d') + str(signal_type)
+    ticker_date = ticker + datetime.today().strftime('%Y/%m/%d') + str(signal_type)
     
     if send_text and ticker_date not in df.symbol_date.unique():
         send_signal_text(text=log_text)

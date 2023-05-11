@@ -46,14 +46,14 @@ class LiveTrade(object):
                 return float(item['qty'])
         return 0
 
-    def is_signal_one(self, current_price, prev_high):
+    def is_signal_one(self, current_price, prev_high, day_high):
         """Signal 1:
             vol >= prev_vol_max * 85%; 
-            price >= prev_high; 
+            price >= prev_high & day_high; 
             curr > 1; 
             before 10 am
         """
-        if current_price >= self.alpha_price * prev_high and datetime.now().hour == 9:
+        if current_price >= self.alpha_price * max(prev_high, day_high) and datetime.now().hour == 9:
             return True
         return False
 
@@ -79,14 +79,14 @@ class LiveTrade(object):
                 ticker_data['volume']), max(ticker_data['high'])
             bid_ask_spread = utils.get_bid_ask_spread_ratio(ticker)
 
-            # Signal 1 - vol >= vol_max * 85%; price >= prev_high; curr > 1; spread_ratio <= 0.2%; before 10 am
+            # Signal 1 - vol >= vol_max * 85%; price >= prev_high & day_high; curr > 1; spread_ratio <= 0.2%; before 10 am
             # Signal 2 - vol >= vol_max; curr > open * 1.15; curr > 1; spread_ratio <= 0.2%; before 12 pm
             # minimal conditions: vol >= vol_max * 85%; curr > 1; spread_ratio <= 0.2%
             if volume_moving >= self.alpha_volume * prev_vol_max and current_price > 1 and bid_ask_spread < 0.3:
                 open_price, day_high = utils.get_open_price(ticker, today)
 
                 # Signal 1 & 2
-                if self.is_signal_one(current_price, prev_high) or self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
+                if self.is_signal_one(current_price, prev_high, day_high) or self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
                     # remove below if-else when real trading: pre hours wont execute mkt order
                     # Trading hours
                     if datetime.now() >= self.open_time:

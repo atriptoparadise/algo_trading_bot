@@ -177,7 +177,7 @@ def send_signal_text(text, to_number=['+16467156606', '+19174975345', '+15713520
 
 
 def log_print_text(ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type='Signal 1'):
-    log_text = f'{ticker} {signal_type}, price: {current_price}, price%: {round(current_price / prev_high, 1)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
+    log_text = f'{ticker} {signal_type}, price: {current_price}, price%: {round(current_price / prev_high, 2)}, vol%: {round(volume_moving / prev_vol_max, 2)}, bid ask spread: {bid_ask_spread} @ {datetime.now()}'
 
     print(log_text)
     logging.warning(log_text)

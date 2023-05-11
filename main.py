@@ -13,9 +13,9 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, alpha_price, alpha_volume, order_amount, high_to_current_ratio, current_to_open_ratio):
-        self.alpha_price = alpha_price
-        self.alpha_volume = alpha_volume
+    def __init__(self, breakout_ratio, vol_ratio, order_amount, high_to_current_ratio, current_to_open_ratio):
+        self.breakout_ratio = breakout_ratio
+        self.vol_ratio = vol_ratio
         self.order_amount = order_amount
         self.current_to_open_ratio = current_to_open_ratio
         self.high_to_current_ratio = high_to_current_ratio
@@ -53,7 +53,7 @@ class LiveTrade(object):
             curr > 1; 
             before 10 am
         """
-        if current_price >= self.alpha_price * max(prev_high, day_high) and datetime.now().hour == 9:
+        if current_price >= self.breakout_ratio * max(prev_high, day_high * 0.99) and datetime.now().hour == 9:
             return True
         return False
 
@@ -82,7 +82,7 @@ class LiveTrade(object):
             # Signal 1 - vol >= vol_max * 85%; price >= prev_high & day_high; curr > 1; spread_ratio <= 0.2%; before 10 am
             # Signal 2 - vol >= vol_max; curr > open * 1.15; curr > 1; spread_ratio <= 0.2%; before 12 pm
             # minimal conditions: vol >= vol_max * 85%; curr > 1; spread_ratio <= 0.2%
-            if volume_moving >= self.alpha_volume * prev_vol_max and current_price > 1 and bid_ask_spread < 0.3:
+            if volume_moving >= self.vol_ratio * prev_vol_max and current_price > 1 and bid_ask_spread < 0.3:
                 open_price, day_high = utils.get_open_price(ticker, today)
 
                 # Signal 1 & 2
@@ -90,7 +90,8 @@ class LiveTrade(object):
                     # remove below if-else when real trading: pre hours wont execute mkt order
                     # Trading hours
                     if datetime.now() >= self.open_time:
-                        qty = self.order_amount // current_price
+                        # Round up
+                        qty = self.order_amount // current_price + 1
 
                         self.create_order(symbol=ticker, qty=qty, side='buy',
                                           order_type='market', time_in_force='day')
@@ -155,7 +156,7 @@ class LiveTrade(object):
         }
 
         if qty != buy_qty:
-            print(f'{symbol} filed trailing stop on {qty} over buy_qty {buy_qty}')
+            print(f'{symbol} filed trailing stop on {buy_qty - qty} over buy_qty {buy_qty}')
             logging.warning(f'{symbol} filed trailing stop on {buy_qty - qty} over buy_qty {buy_qty}')
 
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
@@ -173,7 +174,7 @@ class LiveTrade(object):
 
 
 if __name__ == "__main__":
-    trade = LiveTrade(alpha_price=1, alpha_volume=0.85, order_amount=ORDER_AMOUNT,
+    trade = LiveTrade(breakout_ratio=1, vol_ratio=0.85, order_amount=ORDER_AMOUNT,
                       high_to_current_ratio=0.2, current_to_open_ratio=1.15)
     schedule.every(1).seconds.do(trade.run)
     while True:

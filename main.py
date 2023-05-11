@@ -4,6 +4,7 @@ import schedule
 import logging
 import requests
 import json
+import time as t
 from config import *
 import utils
 
@@ -27,7 +28,7 @@ class LiveTrade(object):
         data = utils.load_data('data')
         ticker_list = data.keys()
         run_list = [
-            ticker for ticker in ticker_list if ticker not in self.holding_stocks]
+            ticker for ticker in ticker_list if ticker not in self.holding_stocks and ticker not in SKIP_LIST]
         return data, run_list
 
     def get_holding_stocks(self):
@@ -35,6 +36,15 @@ class LiveTrade(object):
             "{}/v2/positions".format(API_URL), headers=HEADERS)
         content = json.loads(response.content)
         self.holding_stocks = [item['symbol'] for item in content]
+
+    def get_holding_qty(self, ticker):
+        response = requests.get(
+                "{}/v2/positions".format(API_URL), headers=HEADERS)
+        content = json.loads(response.content)
+        for item in content:
+            if item['symbol'] == ticker:
+                return float(item['qty'])
+        return 0
 
     def is_signal_one(self, current_price, prev_high):
         """Signal 1:
@@ -72,9 +82,10 @@ class LiveTrade(object):
             # Signal 1 - vol >= vol_max * 85%; price >= prev_high; curr > 1; spread_ratio <= 0.2%; before 10 am
             # Signal 2 - vol >= vol_max; curr > open * 1.15; curr > 1; spread_ratio <= 0.2%; before 12 pm
             # minimal conditions: vol >= vol_max * 85%; curr > 1; spread_ratio <= 0.2%
-            if volume_moving >= self.alpha_volume * prev_vol_max and current_price > 1 and bid_ask_spread <= 0.2:
+            if volume_moving >= self.alpha_volume * prev_vol_max and current_price > 1 and bid_ask_spread < 0.3:
                 open_price, day_high = utils.get_open_price(ticker, today)
 
+                # Signal 1 & 2
                 if self.is_signal_one(current_price, prev_high) or self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
                     # remove below if-else when real trading: pre hours wont execute mkt order
                     # Trading hours
@@ -87,9 +98,10 @@ class LiveTrade(object):
                         signal_type = 1
                         utils.log_print_text(
                             ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=signal_type)
-
+                        
+                        t.sleep(1)
                         self.trailing_stop_order(
-                            symbol=ticker, qty=qty, trail_percent=1)
+                            symbol=ticker, buy_qty=qty, trail_percent=1)
                         logging.warning(
                             f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
                     
@@ -99,13 +111,13 @@ class LiveTrade(object):
                         utils.log_print_text(
                             ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=signal_type)
                 
-                # Only satisfies minial conditions
+                # Only satisfies minimal conditions
                 else:
                     signal_type = 2
                     utils.log_print_text(
                         ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=False, signal_type=signal_type)
                     
-
+                # Add to csv for all satisfy minimal conditions
                 utils.check_other_condi_add_signal(ticker, current_price, today, open_price,
                                                    day_high, self.high_to_current_ratio, ticker_data,
                                                    prev_high, signal_type, volume_moving, prev_vol_max, bid_ask_spread)
@@ -127,7 +139,7 @@ class LiveTrade(object):
         return json.loads(r.content)
 
     def trailing_stop_order(self, symbol, buy_qty, trail_percent):
-        qty = utils.get_holding_qty(symbol)
+        qty = self.get_holding_qty(symbol)
         data = {
             "side": "sell",
             "symbol": symbol,
@@ -139,7 +151,7 @@ class LiveTrade(object):
 
         if qty != buy_qty:
             print(f'{symbol} filed trailing stop on {qty} over buy_qty {buy_qty}')
-            logging.warning(f'{symbol} filed trailing stop on {qty} over buy_qty {buy_qty}')
+            logging.warning(f'{symbol} filed trailing stop on {buy_qty - qty} over buy_qty {buy_qty}')
 
         r = requests.post(ORDERS_URL, json=data, headers=HEADERS)
         logging.warning((json.loads(r.content)))

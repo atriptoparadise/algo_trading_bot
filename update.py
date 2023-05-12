@@ -18,6 +18,8 @@ holidays = [datetime(2022, 4, 15).date(),
             datetime(2023, 2, 20).date(),
            ]
 
+failed_list = []
+
 def load_data(filename):
 	with open(f"data/{filename}.pickle", "rb") as f:
 		objects = []
@@ -108,7 +110,8 @@ def update_ticker(ticker, today, last_updated_date, saved_data):
             saved_data[ticker]['time'].append(res['time'][0])
             saved_data[ticker]['date'] = date
         except:
-            print(ticker, date)
+            # print(ticker, date)
+            failed_list.append(ticker)
             pass
     
     remove_old_data(saved_data, ticker, today, 90)
@@ -157,7 +160,7 @@ def run(ticker_list=None, start_date=None, end_date=None):
 
 if __name__ == "__main__":	
     start_date = start = datetime(2023, 2, 1).date()
-    end_date = start = datetime(2023, 5, 2).date()
+    end_date = start = datetime(2023, 5, 11).date()
 
     ticker_df = pd.read_csv('data/stocks_list_202304.csv')
     ticker_list = ticker_df.Symbol.unique()

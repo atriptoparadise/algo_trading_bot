@@ -53,7 +53,7 @@ class LiveTrade(object):
             curr > 1; 
             before 10 am
         """
-        if current_price >= self.breakout_ratio * max(prev_high, day_high * 0.99) and datetime.now().hour == 9:
+        if current_price >= self.breakout_ratio * max(prev_high, day_high * 0.9) and datetime.now().hour == 9:
             return True
         return False
 
@@ -105,7 +105,9 @@ class LiveTrade(object):
                             signal_type = 'Signal 2!'
 
                         utils.log_print_text(
-                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type=signal_type)
+                            ticker, current_price, prev_high, day_high, volume_moving, 
+                            prev_vol_max, bid_ask_spread, ticker_data['beta'], ticker_data['mkt_cap_string'], 
+                            send_text=True, signal_type=signal_type)
                         
                         # t.sleep(1)
                         self.trailing_stop_order(
@@ -116,12 +118,16 @@ class LiveTrade(object):
                     # Pre hours
                     else:
                         utils.log_print_text(
-                            ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=True, signal_type='pre hours')
+                            ticker, current_price, prev_high, day_high, volume_moving, 
+                            prev_vol_max, bid_ask_spread, ticker_data['beta'], ticker_data['mkt_cap_string'], 
+                            send_text=True, signal_type='Pre-hours')
                 
                 # Only satisfies minimal conditions
                 else:
                     utils.log_print_text(
-                        ticker, current_price, prev_high, volume_moving, prev_vol_max, bid_ask_spread, send_text=False, signal_type='minimal condition')
+                        ticker, current_price, prev_high, day_high, volume_moving, 
+                        prev_vol_max, bid_ask_spread, ticker_data['beta'], ticker_data['mkt_cap_string'],
+                        send_text=False, signal_type='min. condition')
                     
                 # Add to csv for all satisfy minimal conditions
                 utils.check_other_condi_add_signal(ticker, current_price, today, open_price,

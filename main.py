@@ -82,7 +82,7 @@ class LiveTrade(object):
             # Signal 1 - vol >= vol_max * 85%; price >= prev_high & day_high; curr > 1; spread_ratio <= 0.2%; before 10 am
             # Signal 2 - vol >= vol_max; curr > open * 1.15; curr > 1; spread_ratio <= 0.2%; before 12 pm
             # minimal conditions: vol >= vol_max * 85%; curr > 1; spread_ratio <= 0.2%
-            if volume_moving >= self.vol_ratio * prev_vol_max and current_price > 1 and bid_ask_spread < 0.3:
+            if volume_moving >= self.vol_ratio * prev_vol_max and current_price > 1 and bid_ask_spread < 0.3 and bid_ask_spread >= 0:
                 open_price, day_high = utils.get_open_price(ticker, today)
 
                 # Signal 1 & 2

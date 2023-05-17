@@ -42,12 +42,11 @@ class LiveTrade(object):
         return 0
 
     def is_signal_fairy_guide(self, ticker, date):
-        o, h, l, c = utils.get_last_5min_ohlc(ticker, date)
+        o, h, l, c, is_up_trend = utils.get_last_5min_ohlc(ticker, date)
         is_fairy_guide, upper_lead_ratio, bottom_lead_ratio, body_ratio = utils.is_fairy_guide(
             o, h, l, c, upper_lead_ratio=5, bottom_lead_ratio=1, body_ratio=0.0001)
-        if is_fairy_guide:
-            return True, upper_lead_ratio, bottom_lead_ratio, body_ratio
-        return False, upper_lead_ratio, bottom_lead_ratio, body_ratio
+
+        return is_fairy_guide, is_up_trend, upper_lead_ratio, bottom_lead_ratio, body_ratio
 
     def find_signal(self, ticker, today):
         logfile = 'logs/signal_{}.log'.format(datetime.now().date())
@@ -56,26 +55,31 @@ class LiveTrade(object):
         try:
             bid_ask_spread = utils.get_bid_ask_spread_ratio(ticker)
             current_price = utils.get_last_close(ticker, today)
-            is_fairy_guide, upper_lead_ratio, bottom_lead_ratio, body_ratio = self.is_signal_fairy_guide(
+            is_fairy_guide, is_up_trend, upper_lead_ratio, bottom_lead_ratio, body_ratio = self.is_signal_fairy_guide(
                 ticker, today)
             if is_fairy_guide and current_price > 1 and bid_ask_spread < 0.3 and bid_ask_spread >= 0:
                 # Hour
-                if datetime.now() >= self.open_time and datetime.now().hour < 12:
+                if is_up_trend and datetime.now() >= self.open_time and datetime.now().hour < 12:
                     # Round up
                     qty = self.order_amount // current_price + 1
 
                     self.create_order(symbol=ticker, qty=qty, side='buy',
-                                    order_type='market', time_in_force='ioc')
+                                      order_type='market', time_in_force='ioc')
 
                     utils.log_print_text_fg(
                         ticker, current_price, upper_lead_ratio,
                         bottom_lead_ratio, body_ratio, bid_ask_spread,
-                        send_text=True, signal_type='Fairy Guide')
+                        send_text=True, signal_type='Fairy Guide!')
 
                     self.trailing_stop_order(
                         symbol=ticker, buy_qty=qty, trail_percent=2)
                     logging.warning(
                         f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
+                else:
+                    utils.log_print_text_fg(
+                        ticker, current_price, upper_lead_ratio,
+                        bottom_lead_ratio, body_ratio, bid_ask_spread,
+                        send_text=False, signal_type='Fairy not in good time or uptrend')
 
         except Exception as e:
             print(e, ticker)

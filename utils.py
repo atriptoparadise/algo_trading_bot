@@ -203,16 +203,19 @@ def log_print_text_fg(ticker, current_price, upper_lead_ratio, bottom_lead_ratio
 
 
 def get_last_5min_ohlc(ticker, date):
+    """Returns open, close, high, low and if last three 5-min bars are continuely going up"""
     response = requests.get(
-        f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/5/minute/{date}/{date}?sort=desc&limit=10&apiKey={POLY_KEY}')
+        f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/5/minute/{date}/{date}?sort=desc&limit=20&apiKey={POLY_KEY}')
     content = json.loads(response.content)
 
     if not content or not 'results' in content:
         return
 
     res = content['results']
-    o, c, h, l = res[-1]['o'], res[-1]['c'], res[-1]['h'], res[-1]['l']
-    return o, h, l, c
+    # Last 5-min bar ochl 
+    o, c, h, l = res[1]['o'], res[1]['c'], res[1]['h'], res[1]['l']
+    is_up_trend = res[1]['c'] > res[2]['c'] and res[2]['c'] > res[3]['c']
+    return o, h, l, c, is_up_trend
 
 
 def get_last_close(ticker, date):
@@ -231,7 +234,7 @@ def is_fairy_guide(o, h, l, c, upper_lead_ratio=5, bottom_lead_ratio=1, body_rat
     
     upper_lead = h - c
     bottom_lead = o - l
-    
+
     if upper_lead >= upper_lead_ratio * body and bottom_lead <= bottom_lead_ratio * body and body >= c * body_ratio:
         return True, upper_lead / body, bottom_lead / body, 100 * body / c
     return False, upper_lead / body, bottom_lead / body, 100 * body / c

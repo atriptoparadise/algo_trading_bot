@@ -184,9 +184,10 @@ def log_print_text(ticker, current_price, prev_high, day_high, volume_moving, pr
 
     df = pd.read_csv('data/signals.csv', index_col=0)
     ticker_date = ticker + datetime.today().strftime('%Y/%m/%d') + signal_type
-    
+
     if send_text and ticker_date not in df.symbol_date.unique():
         send_signal_text(text=log_text)
+
 
 def log_print_text_fg(ticker, current_price, upper_lead_ratio, bottom_lead_ratio, body_ratio, bid_ask_spread, send_text=True, signal_type='Fairy Guide'):
     log_text = f'{ticker} {signal_type}, price: {current_price}, upper lead ratio: {round(upper_lead_ratio, 2)}, bottom lead ratio: {round(bottom_lead_ratio, 2)}, body ratio: {round(body_ratio, 2)}, bid ask spread: {bid_ask_spread}%, @ {datetime.now().strftime("%H:%M:%S")}'
@@ -196,31 +197,34 @@ def log_print_text_fg(ticker, current_price, upper_lead_ratio, bottom_lead_ratio
 
     df = pd.read_csv('data/signals.csv', index_col=0)
     ticker_date = ticker + datetime.today().strftime('%Y/%m/%d') + signal_type
-    
+
     if send_text and ticker_date not in df.symbol_date.unique():
         send_signal_text(text=log_text)
 
+
 def get_last_5min_ohlc(ticker, date):
     response = requests.get(
-            f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/5/minute/{date}/{date}?sort=desc&limit=10&apiKey={POLY_KEY}')
+        f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/5/minute/{date}/{date}?sort=desc&limit=10&apiKey={POLY_KEY}')
     content = json.loads(response.content)
 
     if not content or not 'results' in content:
-        return 
-    
+        return
+
     res = content['results']
     o, c, h, l = res[-1]['o'], res[-1]['c'], res[-1]['h'], res[-1]['l']
     return o, h, l, c
 
+
 def get_last_close(ticker, date):
     response = requests.get(
-            f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/minute/{date}/{date}?sort=desc&limit=1&apiKey={POLY_KEY}')
+        f'{POLY_URL}/v2/aggs/ticker/{ticker}/range/1/minute/{date}/{date}?sort=desc&limit=1&apiKey={POLY_KEY}')
     content = json.loads(response.content)
     if not content or not 'results' in content:
-        return 
+        return
     return content['results'][0]['c']
 
-def is_fairy_guide(o, h, l, c, upper_lead_ratio=3, bottom_lead_ratio=1, body_ratio=0.0001):
+
+def is_fairy_guide(o, h, l, c, upper_lead_ratio=5, bottom_lead_ratio=1, body_ratio=0.0001):
     body = np.abs(o - c) + 1e-7
     upper_lead = h - max(o, c)
     bottom_lead = min(o, c) - l

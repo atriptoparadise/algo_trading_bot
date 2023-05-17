@@ -189,8 +189,8 @@ def log_print_text(ticker, current_price, prev_high, day_high, volume_moving, pr
         send_signal_text(text=log_text)
 
 
-def log_print_text_fg(ticker, current_price, upper_lead_ratio, bottom_lead_ratio, body_ratio, bid_ask_spread, send_text=True, signal_type='Fairy Guide'):
-    log_text = f'{ticker} {signal_type}, price: {current_price}, upper lead ratio: {round(upper_lead_ratio, 2)}, bottom lead ratio: {round(bottom_lead_ratio, 2)}, body ratio: {round(body_ratio, 2)}, bid ask spread: {bid_ask_spread}%, @ {datetime.now().strftime("%H:%M:%S")}'
+def log_print_text_fg(ticker, current_price, curr_to_open, is_up_trend, upper_lead_ratio, bottom_lead_ratio, body_ratio, bid_ask_spread, send_text=True, signal_type='Fairy Guide'):
+    log_text = f'{ticker} {signal_type}, price: {current_price}, curr_to_open: {curr_to_open}, is_up_trend: {is_up_trend}, upper lead ratio: {round(upper_lead_ratio, 2)}, bottom lead ratio: {round(bottom_lead_ratio, 2)}, body ratio: {round(body_ratio, 2)}, bid ask spread: {bid_ask_spread}%, @ {datetime.now().strftime("%H:%M:%S")}'
 
     print(log_text)
     logging.warning(log_text)

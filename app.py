@@ -13,9 +13,9 @@ logging.basicConfig(filename=logfile, level=logging.WARNING)
 
 
 class LiveTrade(object):
-    def __init__(self, order_amount, current_to_open_ratio):
+    def __init__(self, order_amount, curr_to_open_ratio):
         self.order_amount = order_amount
-        self.current_to_open_ratio = current_to_open_ratio
+        self.curr_to_open_ratio = curr_to_open_ratio
         self.holding_stocks = []
         self.open_time = datetime.today().replace(
             hour=9, minute=45, second=0, microsecond=0)
@@ -58,8 +58,11 @@ class LiveTrade(object):
             is_fairy_guide, is_up_trend, upper_lead_ratio, bottom_lead_ratio, body_ratio = self.is_signal_fairy_guide(
                 ticker, today)
             if is_fairy_guide and current_price > 1 and bid_ask_spread < 0.3 and bid_ask_spread >= 0:
-                # Hour
-                if is_up_trend and datetime.now() >= self.open_time and datetime.now().hour < 12:
+                _, open_price = utils.get_open_price(ticker, today)
+                curr_to_open = 100 * current_price / open_price - 100
+                
+                # Check if uptrend, curr_to_open not too high, and time 
+                if is_up_trend and curr_to_open < self.curr_to_open_ratio and datetime.now() >= self.open_time and datetime.now().hour < 12:
                     # Round up
                     qty = self.order_amount // current_price + 1
 
@@ -67,8 +70,8 @@ class LiveTrade(object):
                                       order_type='market', time_in_force='ioc')
 
                     utils.log_print_text_fg(
-                        ticker, current_price, upper_lead_ratio,
-                        bottom_lead_ratio, body_ratio, bid_ask_spread,
+                        ticker, current_price, curr_to_open, is_up_trend, 
+                        upper_lead_ratio, bottom_lead_ratio, body_ratio, bid_ask_spread,
                         send_text=True, signal_type='Fairy Guide!')
 
                     self.trailing_stop_order(
@@ -77,9 +80,9 @@ class LiveTrade(object):
                         f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
                 else:
                     utils.log_print_text_fg(
-                        ticker, current_price, upper_lead_ratio,
-                        bottom_lead_ratio, body_ratio, bid_ask_spread,
-                        send_text=False, signal_type='Fairy not in good time or uptrend')
+                        ticker, current_price, curr_to_open, is_up_trend, 
+                        upper_lead_ratio, bottom_lead_ratio, body_ratio, bid_ask_spread,
+                        send_text=False, signal_type='Fairy not in good time or uptrend or curr too high')
 
         except Exception as e:
             print(e, ticker)
@@ -131,7 +134,7 @@ class LiveTrade(object):
 
 if __name__ == "__main__":
     trade = LiveTrade(order_amount=FG_ORDER_AMOUNT,
-                      current_to_open_ratio=1.15)
+                      curr_to_open_ratio=15)
     schedule.every(10).seconds.do(trade.run)
     while True:
         schedule.run_pending()

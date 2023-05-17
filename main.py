@@ -94,7 +94,7 @@ class LiveTrade(object):
                         qty = self.order_amount // current_price + 1
 
                         self.create_order(symbol=ticker, qty=qty, side='buy',
-                                          order_type='market', time_in_force='day')
+                                          order_type='market', time_in_force='ioc')
 
                         # Add Signal type
                         if self.is_signal_one(current_price, prev_high, day_high) and self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):

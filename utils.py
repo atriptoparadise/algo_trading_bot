@@ -225,9 +225,13 @@ def get_last_close(ticker, date):
 
 
 def is_fairy_guide(o, h, l, c, upper_lead_ratio=5, bottom_lead_ratio=1, body_ratio=0.0001):
-    body = np.abs(o - c) + 1e-7
-    upper_lead = h - max(o, c)
-    bottom_lead = min(o, c) - l
+    body = c - o
+    if body <= 0:
+        return False, np.nan, np.nan, np.nan
+    
+    upper_lead = h - c
+    bottom_lead = o - l
+    
     if upper_lead >= upper_lead_ratio * body and bottom_lead <= bottom_lead_ratio * body and body >= c * body_ratio:
         return True, upper_lead / body, bottom_lead / body, 100 * body / c
     return False, upper_lead / body, bottom_lead / body, 100 * body / c

@@ -214,7 +214,7 @@ def get_last_5min_ohlc(ticker, date):
     res = content['results']
     # Last 5-min bar ochl 
     o, c, h, l = res[1]['o'], res[1]['c'], res[1]['h'], res[1]['l']
-    is_up_trend = res[1]['c'] > res[2]['c'] and res[2]['c'] > res[3]['c']
+    is_up_trend = res[1]['h'] > res[2]['h'] and res[2]['h'] > res[3]['h']
     return o, h, l, c, is_up_trend
 
 

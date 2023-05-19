@@ -190,7 +190,7 @@ def log_print_text(ticker, current_price, prev_high, day_high, volume_moving, pr
 
 
 def log_print_text_fg(ticker, current_price, curr_to_open, is_up_trend, upper_lead_ratio, bottom_lead_ratio, body_ratio, bid_ask_spread, send_text=True, signal_type='Fairy Guide'):
-    log_text = f'{ticker} {signal_type}, price: {current_price}, curr_to_open: {curr_to_open}, is_up_trend: {is_up_trend}, upper lead ratio: {round(upper_lead_ratio, 2)}, bottom lead ratio: {round(bottom_lead_ratio, 2)}, body ratio: {round(body_ratio, 2)}, bid ask spread: {bid_ask_spread}%, @ {datetime.now().strftime("%H:%M:%S")}'
+    log_text = f'{ticker} {signal_type}, price: {current_price}, curr_to_open: {round(curr_to_open, 2)}%, is_up_trend: {is_up_trend}, upper lead ratio: {round(upper_lead_ratio, 2)}, bottom lead ratio: {round(bottom_lead_ratio, 2)}, body ratio: {round(body_ratio, 2)}, bid ask spread: {bid_ask_spread}%, @ {datetime.now().strftime("%H:%M:%S")}'
 
     print(log_text)
     logging.warning(log_text)
@@ -212,9 +212,10 @@ def get_last_5min_ohlc(ticker, date):
         return
 
     res = content['results']
+    idx = 0 if len(res) == 3 else 1
     # Last 5-min bar ochl 
-    o, c, h, l = res[1]['o'], res[1]['c'], res[1]['h'], res[1]['l']
-    is_up_trend = res[1]['h'] > res[2]['h'] and res[2]['h'] > res[3]['h']
+    o, c, h, l = res[idx]['o'], res[idx]['c'], res[idx]['h'], res[idx]['l']
+    is_up_trend = res[idx]['h'] > res[idx + 1]['h'] and res[idx + 1]['h'] > res[idx + 2]['h']
     return o, h, l, c, is_up_trend
 
 

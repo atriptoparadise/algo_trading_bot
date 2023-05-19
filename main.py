@@ -29,7 +29,11 @@ class LiveTrade(object):
         ticker_list = data.keys()
         run_list = [
             ticker for ticker in ticker_list if ticker not in self.holding_stocks and ticker not in SKIP_LIST]
-        return data, run_list
+        
+        signal_df = pd.read_csv('data/signals.csv', index_col=0)
+        signal_list = signal_df.symbol_date.unique()
+        signal_list_date = datetime.today().strftime('%Y/%m/%d')
+        return data, run_list, signal_list, signal_list_date
 
     def get_holding_stocks(self):
         response = requests.get(
@@ -68,7 +72,7 @@ class LiveTrade(object):
             return True
         return False
 
-    def find_signal(self, ticker, ticker_data, today):
+    def find_signal(self, ticker, ticker_data, today, signal_list, signal_list_date):
         logfile = 'logs/signal_{}.log'.format(datetime.now().date())
         logging.basicConfig(filename=logfile, level=logging.WARNING)
 
@@ -90,12 +94,7 @@ class LiveTrade(object):
                     # remove below if-else when real trading: pre hours wont execute mkt order
                     # Trading hours
                     if datetime.now() >= self.open_time:
-                        # Round up
-                        qty = self.order_amount // current_price + 1
-
-                        self.create_order(symbol=ticker, qty=qty, side='buy',
-                                          order_type='market', time_in_force='ioc')
-
+                        
                         # Add Signal type
                         if self.is_signal_one(current_price, prev_high, day_high) and self.is_signal_two(volume_moving, prev_vol_max, current_price, open_price):
                             signal_type = 'Signal 1 & 2!'
@@ -104,16 +103,26 @@ class LiveTrade(object):
                         else:
                             signal_type = 'Signal 2!'
 
-                        utils.log_print_text(
-                            ticker, current_price, prev_high, day_high, volume_moving, 
-                            prev_vol_max, bid_ask_spread, ticker_data['beta'], ticker_data['mkt_cap_string'], 
-                            send_text=True, signal_type=signal_type)
+                        ticker_date = ticker + signal_list_date + signal_type
+
+                        # Only trade once a day
+                        if ticker_date not in signal_list:
+                            # Round up
+                            qty = self.order_amount // current_price + 1
+
+                            self.create_order(symbol=ticker, qty=qty, side='buy',
+                                            order_type='market', time_in_force='ioc')
                         
-                        # t.sleep(1)
-                        self.trailing_stop_order(
-                            symbol=ticker, buy_qty=qty, trail_percent=2)
-                        logging.warning(
-                            f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
+                            utils.log_print_text(
+                                ticker, current_price, prev_high, day_high, volume_moving, 
+                                prev_vol_max, bid_ask_spread, ticker_data['beta'], ticker_data['mkt_cap_string'], 
+                                send_text=True, signal_type=signal_type)
+                            
+                            # t.sleep(1)
+                            self.trailing_stop_order(
+                                symbol=ticker, buy_qty=qty, trail_percent=2)
+                            logging.warning(
+                                f'{ticker} - Trailing stop order created @ {datetime.now()}/n' + '-' * 60 + '/n')
                     
                     # Pre hours
                     else:
@@ -135,6 +144,7 @@ class LiveTrade(object):
                                                    prev_high, signal_type, volume_moving, prev_vol_max, bid_ask_spread)
 
         except Exception as e:
+            print(ticker, e)
             pass
 
     def create_order(self, symbol, qty, side, order_type, time_in_force):
@@ -170,13 +180,13 @@ class LiveTrade(object):
         return json.loads(r.content)
 
     def run(self, date=None):
-        data, run_list = self.setup()
+        data, run_list, signal_list, signal_list_date = self.setup()
         if not date:
             date = datetime.today().strftime('%Y-%m-%d')
 
         print(f'\nStart @ {datetime.now()}')
         Parallel(n_jobs=-1)(delayed(self.find_signal)(
-            ticker, data[ticker], date) for ticker in run_list)
+            ticker, data[ticker], date, signal_list, signal_list_date) for ticker in run_list)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
 from datetime import datetime
 from joblib import Parallel, delayed
 import schedule
+import pandas as pd
 import logging
 import requests
 import json

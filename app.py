@@ -17,8 +17,10 @@ class LiveTrade(object):
         self.order_amount = order_amount
         self.curr_to_open_ratio = curr_to_open_ratio
         self.holding_stocks = []
-        self.open_time = datetime.today().replace(
+        self.open_time_fg = datetime.today().replace(
             hour=9, minute=45, second=0, microsecond=0)
+        self.open_time = datetime.today().replace(
+            hour=9, minute=30, second=0, microsecond=0)
 
     def setup(self):
         self.get_holding_stocks()
@@ -89,7 +91,7 @@ class LiveTrade(object):
                 curr_to_open = 100 * current_price / open_price - 100
                 
                 # Check if uptrend, curr_to_open not too high, and time 
-                if is_up_trend and curr_to_open < self.curr_to_open_ratio and datetime.now() >= self.open_time and datetime.now().hour < 12:
+                if is_up_trend and curr_to_open < self.curr_to_open_ratio and datetime.now() >= self.open_time_fg and datetime.now().hour < 12:
                     # Round up
                     qty = self.order_amount // current_price + 1
 

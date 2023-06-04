@@ -127,25 +127,28 @@ class LiveTrade(object):
                     
                     # Pre hours
                     else:
+                        signal_type = 'Pre-hours'
                         utils.log_print_text(
                             ticker, current_price, prev_high, day_high, volume_moving, 
                             prev_vol_max, bid_ask_spread, ticker_data['beta'], ticker_data['mkt_cap_string'], 
-                            send_text=True, signal_type='Pre-hours')
+                            send_text=True, signal_type=signal_type)
                 
                 # Only satisfies minimal conditions
                 else:
+                    signal_type = 'min. condition'
                     utils.log_print_text(
                         ticker, current_price, prev_high, day_high, volume_moving, 
                         prev_vol_max, bid_ask_spread, ticker_data['beta'], ticker_data['mkt_cap_string'],
-                        send_text=False, signal_type='min. condition')
+                        send_text=False, signal_type=signal_type)
                     
                 # Add to csv for all satisfy minimal conditions
                 utils.check_other_condi_add_signal(ticker, current_price, today, open_price,
                                                    day_high, self.high_to_current_ratio, ticker_data,
-                                                   prev_high, signal_type, volume_moving, prev_vol_max, bid_ask_spread)
+                                                   prev_high, signal_type, volume_moving, prev_vol_max, 
+                                                   bid_ask_spread)
 
         except Exception as e:
-            print(ticker, e)
+            # print(ticker, e)
             pass
 
     def create_order(self, symbol, qty, side, order_type, time_in_force):

@@ -126,6 +126,30 @@ def check_other_condi_add_signal(ticker, current_price, today, open_price, day_h
     add_signal_to_csv(ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded,
                       volume_moving, prev_vol_max, current_price, prev_high, open_price, bid_ask_spread)
 
+def add_signal_csv_basic(ticker, today, order_type, current_price, open_price):
+    date = datetime.strptime(today, '%Y-%m-%d').date()
+    time = datetime.now().strftime("%H:%M:%S")
+    weekday = int(date.weekday()) + 1
+
+    new_signal = [ticker, date, time, 
+                  ticker + date.strftime('%Y/%m/%d') + order_type, order_type,
+                  weekday, np.nan, np.nan, np.nan,
+                  np.nan, np.nan, np.nan,
+                  np.nan, current_price, np.nan,
+                  open_price, (current_price / open_price - 1) * 100,
+                  np.nan, np.nan, np.nan]
+    
+    new = pd.Series(new_signal, index=['symbol', 'date', 'time', 'symbol_date', 'order', 'weekday',
+                                       'after_3_pm', 'high_current_or_close_check', 'nine_days_close_check',
+                                       'if_exceed_previous_high', 'moving_volume', 'previous_volume_max',
+                                       'volume_ratio', 'entry_price', 'previous_high', 'open_price',
+                                       'open_ratio', 'amount', 'if_larger_20m', 'bid_ask_spread'])
+
+    df = pd.read_csv('data/signals.csv', index_col=0)
+    if new[3] in df.symbol_date.unique():
+        return
+    df = df.append(new, ignore_index=True)
+    df.to_csv('data/signals.csv')
 
 def add_signal_to_csv(ticker, today, order, after_3pm, good, exceed_nine_days_close, exceeded, volume_moving, prev_vol_max, current_price, prev_high, open_price, bid_ask_spread):
     date = datetime.strptime(today, '%Y-%m-%d').date()
@@ -197,10 +221,26 @@ def log_print_text_fg(ticker, current_price, curr_to_open, is_up_trend, upper_le
 
     df = pd.read_csv('data/signals.csv', index_col=0)
     ticker_date = ticker + datetime.today().strftime('%Y/%m/%d') + signal_type
+    date = datetime.today().strftime('%Y-%m-%d')
 
     if send_text and ticker_date not in df.symbol_date.unique():
         send_signal_text(text=log_text)
+        add_signal_csv_basic(ticker, date, signal_type, current_price, np.nan)
 
+def log_print_text_mom(ticker, current_price, open_price, send_text=True, signal_type='momentum'):
+    curr_to_open = 100 * current_price / open_price - 100
+    log_text = f'{ticker} {signal_type}, price: {current_price}, curr_to_open: {round(curr_to_open, 2)}%, @ {datetime.now().strftime("%H:%M:%S")}'
+
+    print(log_text)
+    logging.warning(log_text)
+
+    df = pd.read_csv('data/signals.csv', index_col=0)
+    ticker_date = ticker + datetime.today().strftime('%Y/%m/%d') + signal_type
+    date = datetime.today().strftime('%Y-%m-%d')
+
+    if send_text and ticker_date not in df.symbol_date.unique():
+        send_signal_text(text=log_text)
+        add_signal_csv_basic(ticker, date, signal_type, current_price, open_price)
 
 def get_last_5min_ohlc(ticker, date):
     """Returns open, close, high, low and if last three 5-min bars are continuely going up"""

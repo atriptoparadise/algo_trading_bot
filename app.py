@@ -25,7 +25,7 @@ class LiveTrade(object):
     def setup(self):
         self.get_holding_stocks()
         run_list = [
-            ticker for ticker in FG_list if ticker not in self.holding_stocks and ticker not in SKIP_LIST]
+            ticker for ticker in FG_LIST if ticker not in self.holding_stocks and ticker not in SKIP_LIST]
         
         signal_df = pd.read_csv('data/signals.csv', index_col=0)
         signal_list = signal_df.symbol_date.unique()
@@ -54,7 +54,7 @@ class LiveTrade(object):
 
         return is_fairy_guide, is_up_trend, upper_lead_ratio, bottom_lead_ratio, body_ratio
 
-    def is_signal_biotech_momentum(self, ticker, curr, open, signal_list, signal_list_date):
+    def is_signal_momentum(self, ticker, curr, open, signal_list, signal_list_date):
         ticker_date = ticker + signal_list_date + "momentum"
         if curr >= open * 1.01 and ticker_date not in signal_list:
             return True
@@ -66,11 +66,11 @@ class LiveTrade(object):
 
         try:
             current_price = utils.get_last_close(ticker, today)
-            if ticker == 'LABU' or ticker == 'LABD' and datetime.now() >= self.open_time and datetime.now().hour < 10:
-                _, open_price = utils.get_open_price(ticker, today)
-                if self.is_signal_biotech_momentum(ticker, current_price, open_price, signal_list, signal_list_date):
+            if ticker in MOM_LIST and datetime.now() >= self.open_time and datetime.now().hour < 10:
+                open_price, _ = utils.get_open_price(ticker, today)
+                if self.is_signal_momentum(ticker, current_price, open_price, signal_list, signal_list_date):
                     # Round up
-                    qty = self.order_amount // current_price + 1
+                    qty = (self.order_amount / 2) // current_price + 1
 
                     self.create_order(symbol=ticker, qty=qty, side='buy',
                                       order_type='market', time_in_force='ioc')
@@ -87,7 +87,7 @@ class LiveTrade(object):
             is_fairy_guide, is_up_trend, upper_lead_ratio, bottom_lead_ratio, body_ratio = self.is_signal_fairy_guide(
                 ticker, today)
             if is_fairy_guide and current_price > 1 and bid_ask_spread < 0.3 and bid_ask_spread >= 0:
-                _, open_price = utils.get_open_price(ticker, today)
+                open_price, _ = utils.get_open_price(ticker, today)
                 curr_to_open = 100 * current_price / open_price - 100
                 
                 # Check if uptrend, curr_to_open not too high, and time 
